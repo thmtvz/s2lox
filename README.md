@@ -18,7 +18,7 @@ make java
 
 - The most important program ever:
 ```
-print "Hello, world!";
+print "Hello, world!"; //Hello, world!
 ```
 
 - Recursive fibonacci:
@@ -32,5 +32,5 @@ var startTime = clock();
 var result = fib(12);
 var endTime = clock();
 
-print toString(endTime - startTime) + " was the time needed to compute fib(12)";
+print toString(endTime - startTime) + " was the time needed to compute fib(12)"; //0.(0)* was the time...
 ```
