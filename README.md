@@ -1,6 +1,6 @@
 # s2lox (started life as lox)
 
-s2lox is a small toy language based on [the lox language][https://craftinginterpreters.com] with some 
+s2lox is a small toy language based on [the lox language](https://craftinginterpreters.com) with some 
 flavour of mine on top of it.
 
 
