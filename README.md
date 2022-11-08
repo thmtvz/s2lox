@@ -8,10 +8,10 @@ Currently on development.
 
 ## Getting it
 
-```sh
+```bash
 git clone https://github.com/thmtvz/s2lox && cd s2lox
 make java
-./build/jS2lox --help
+./build/jS2lox resources/hello.lx #😄
 ```
 
 ## Examples
