@@ -9,6 +9,7 @@ MAINCLASS  := $(TARGETDIR)$(addsuffix .class, $(MAIN))
 MAINSOURCE := $(DIRSTRUCT)$(addsuffix .java, $(MAIN))
 JC	   := javac
 OPTS	   := -Werror -d $(BUILDDIR)
+LINT	   := -Xlint:unchecked
 
 java: clean
 	@ echo "Building script"
@@ -19,7 +20,7 @@ java: clean
 
 $(MAINCLASS): $(SOURCES)
 	@ echo "Compiling sources" 
-	@ $(JC) $(OPTS) $(MAINSOURCE)
+	@ $(JC) $(OPTS) $(LINT) $(MAINSOURCE)
 
 archive: $(MAINCLASS)
 	@ echo "Compressing into jar file"
