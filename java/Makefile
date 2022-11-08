@@ -13,7 +13,7 @@ OPTS	   := -Werror -d $(BUILDDIR)
 java: clean
 	@ echo "Building script"
 	@ echo "#!/usr/bin/env sh" > $(BUILDDIR)jS2lox
-	@ echo java -jar $(BUILDDIR)S2lox.jar >> $(BUILDDIR)jS2lox
+	@ echo java -jar $(BUILDDIR)S2lox.jar $$\* >> $(BUILDDIR)jS2lox
 	@ chmod +x $(BUILDDIR)jS2lox
 	@ echo "Done"
 

@@ -7,6 +7,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Arrays;
 
 public class S2lox{
 
@@ -15,8 +16,8 @@ public class S2lox{
     private static final Interpreter interpreter = new Interpreter();
 
     public static void main(String args[]) throws IOException{
-	if(args.length > 1){
-	    System.out.println("usage: S2lox [script]");
+	if(args.length > 1 || Arrays.binarySearch(args, "--help") >= 0){
+	    System.out.println("jS2lox: S2lox [script] [--help]");
 	    System.exit(64);
 	} else if(args.length == 1){
 	    runScript(args[0]);
@@ -58,16 +59,16 @@ public class S2lox{
     static void run(String source){
 	Scanner scanner = new Scanner(source);
 	List<Token> tokens = scanner.scanTokens();
-	for(Token tok :tokens){
-	    System.out.println(tok);
-	}
+	// for(Token tok :tokens){
+	//     System.out.println(tok);
+	// }
 	Parser parser = new Parser(tokens);
 	List<Stmt> statements = parser.parse();
-	for(Stmt statement : statements){
-	    System.out.print("{STATEMENT: ");
-	    System.out.print(statement);
-	    System.out.print("}");
-	}
+	// for(Stmt statement : statements){
+	//     System.out.print("{STATEMENT: ");
+	//     System.out.print(statement);
+	//     System.out.print("}");
+	// }
 	if(hadError) return;
 
 	Resolver resolver = new Resolver(interpreter);
