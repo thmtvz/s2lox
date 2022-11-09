@@ -37,6 +37,36 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
 
 		public String toString() { return "<native fun>"; }
 	    });
+	globals.define("number", new S2loxCallable(){
+		@Override
+		public int arity() { return 1; }
+
+		@Override
+		public Object call(Interpreter interpreter, List<Object> arguments){
+		    Object arg = arguments.get(0);
+		    if(arg instanceof Boolean){
+			if((Boolean)arg) return 1;
+			return 0;
+		    }
+		    if(arg == null) return 0;
+		    return Double.parseDouble(arg.toString());
+		}
+
+		@Override
+		public String toString() { return "<native fun>"; }
+	    });
+	globals.define("input", new S2loxCallable(){
+		@Override
+		public int arity() { return 0; }
+
+		@Override
+		public Object call(Interpreter interpreter, List<Object> arguments){
+		    return System.console().readLine();
+		}
+		
+		@Override
+		public String toString() { return "<native fun>"; }
+	    });
     }
 
     void interpret(List<Stmt> statements){
