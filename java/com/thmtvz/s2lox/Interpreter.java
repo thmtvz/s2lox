@@ -368,7 +368,7 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
 
     @Override
     public Object visitGetExpr(Expr.Get expr){
-	Object object = evaluate(expr);
+	Object object = evaluate(expr.object);
 	if(object instanceof S2loxInstance){
 	    return ((S2loxInstance)object).get(expr.name);
 	}

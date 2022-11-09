@@ -18,7 +18,7 @@ class S2loxInstance{
     }
 
     public Object get(Token name){
-	if(fields.containsValue(name.lexeme)){
+	if(fields.containsKey(name.lexeme)){
 	    return fields.get(name.lexeme);
 	}
 
