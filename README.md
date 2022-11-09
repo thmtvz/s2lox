@@ -8,6 +8,15 @@ Currently on development.
 
 ## Getting it
 
+### Depends on:
+
+- jar
+- make
+- java
+- javac
+- nodejs
+- coreutils
+
 ```bash
 git clone https://github.com/thmtvz/s2lox && cd s2lox
 make java
