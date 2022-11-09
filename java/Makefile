@@ -1,25 +1,33 @@
 # using make because this project is very simple in nature,
-# and hold have no dependencies
+# and hold have no java dependencies
 
 MAIN	   := S2lox
 DIRSTRUCT  := com/thmtvz/s2lox/
-TARGETDIR  := $(BUILDDIR)$(DIRSTRUCT)
+TARGETDIR  := $(DEBUG)$(BUILDDIR)$(DIRSTRUCT)
 SOURCES	   := $(DIRSTRUCT)*.java
 MAINCLASS  := $(TARGETDIR)$(addsuffix .class, $(MAIN))
 MAINSOURCE := $(DIRSTRUCT)$(addsuffix .java, $(MAIN))
-SCRIPTNAME := $(BUILDDIR)jS2lox$(DEBUG)
+SCRIPTNAME := $(BUILDDIR)jS2lox
 JC	   := javac
 DEBUGFLAG  := -g
-OPTS	   := -Werror -d $(BUILDDIR)
+OPTS	   := -Werror -d $(BUILDDIR)$(DEBUG)
 LINT	   := -Xlint:unchecked
-JARNAME := $(MAIN)$(DEBUG)
+JARNAME	   := $(MAIN)
 
-java: archive
+$(TARGETDIR)$(SCRIPTNAME): $(TARGETDIR)$(JARNAME)
+ifeq ($(strip $(DEBUG)),)
 	@ echo "Building script"
 	@ echo "#!/usr/bin/env sh" > $(SCRIPTNAME)
 	@ echo java -jar $(BUILDDIR)S2lox.jar $$\* >> $(SCRIPTNAME)
 	@ chmod +x $(SCRIPTNAME)
 	@ echo "Done"
+endif
+
+$(TARGETDIR)$(JARNAME): $(MAINCLASS)
+ifeq ($(strip $(DEBUG)),)
+	@ echo "Compressing into jar file"
+	@ cd $(BUILDDIR) && jar cfe $(JARNAME).jar $(subst /,.,$(DIRSTRUCT))$(MAIN) $(DIRSTRUCT)*.class
+endif
 
 $(MAINCLASS): $(SOURCES)
 	@ echo "Compiling sources"
@@ -29,11 +37,7 @@ else
 	@ $(JC) $(DEBUGFLAG) $(LINT) $(OPTS) $(MAINSOURCE)
 endif
 
-archive: $(MAINCLASS)
-	@ echo "Compressing into jar file"
-	@ cd $(BUILDDIR) && jar cfe $(JARNAME).jar $(subst /,.,$(DIRSTRUCT))$(MAIN) $(DIRSTRUCT)*.class
-
 clean: 
 	@ echo "Cleaning build directory"
 
-.PHONY: clean archive
+.PHONY: clean 

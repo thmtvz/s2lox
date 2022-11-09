@@ -1,14 +1,12 @@
 BUILDDIR := $(realpath .)/build/
+GENAST	 := tool/genAst.js
 
-test:
-	@ echo $(BUILDDIR)
+$(GENAST):
+	@ echo "Generating ast"
+	./$(GENAST)
 
-genast: 
-	@ echo "Running AST generator"
-	@ tool/genAst.js java/com/thmtvz/s2lox
-
-java: genast
-	@ $(MAKE) -C java BUILDDIR=$(BUILDDIR) 
+java: $(GENAST)
+	@ $(MAKE) -C java BUILDDIR=$(BUILDDIR)
 
 javadebug: genast
 	@ $(MAKE) -C java BUILDDIR=$(BUILDDIR) DEBUG=debug
