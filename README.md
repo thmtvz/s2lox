@@ -11,7 +11,7 @@ Currently on development.
 ```bash
 git clone https://github.com/thmtvz/s2lox && cd s2lox
 make java
-./build/jS2lox resources/hello.lx #😄
+./build/jS2lox resources/examples/hello.lx #😄
 ```
 
 ## Examples

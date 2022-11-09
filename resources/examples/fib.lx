@@ -1,0 +1,21 @@
+class s{} //dynamic storage hack
+
+fun fib(n){
+    if(n <= 0) return 0;
+    var store = s();
+    store.x = 1;
+    store.y = 1;
+    for(var i = 3; i <= n; i = i + 1){
+        var temp = store.y;
+	store.y = store.y + store.x;
+	store.x = temp;
+    }
+    return store.y;
+}
+
+var t1 = clock();
+var result = fib(30);
+var t2 = clock();
+
+print "fib(30) took " + toString(t2 - t1) +
+  " time to complete and returned " + toString(result);
