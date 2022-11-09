@@ -10,6 +10,9 @@ genast:
 java: genast
 	@ $(MAKE) -C java BUILDDIR=$(BUILDDIR) 
 
+javadebug: genast
+	@ $(MAKE) -C java BUILDDIR=$(BUILDDIR) DEBUG=debug
+
 clean:
 	@ echo "oi"
 
