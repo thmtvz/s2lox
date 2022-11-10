@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import static com.thmtvz.s2lox.TokenType.*;
 
@@ -12,6 +13,7 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
     final Environment globals = new Environment();
     private Environment environment = globals;
     private final Map<Expr, Integer> locals = new HashMap<>();
+    private final Random rng = new Random();
 
     Interpreter(){
 	globals.define("clock", new S2loxCallable(){
@@ -67,6 +69,23 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
 		@Override
 		public String toString() { return "<native fun>"; }
 	    });
+	globals.define("random", new S2loxCallable(){
+		@Override
+		public int arity() { return 2; }
+
+		@Override
+		public Object call(Interpreter interpreter, List<Object> arguments){
+		    double maxValue = Double.parseDouble(arguments.get(1).toString());
+		    double minValue = Double.parseDouble(arguments.get(0).toString());
+		    double rand = rng.nextDouble();
+		    return (double) (Math.ceil(rand * maxValue) + minValue);
+		}
+		
+		@Override
+		public String toString() { return "<native fun>"; }
+	    });
+	globals.define("object", new S2loxClass("object", null,
+						new HashMap<String, S2loxFunction>()));
     }
 
     void interpret(List<Stmt> statements){
