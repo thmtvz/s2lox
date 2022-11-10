@@ -1,0 +1,9 @@
+CC	 := gcc
+PROGNAME := cS2lox
+PROGPATH := $(BUILDDIR)$(PROGNAME)
+CFLAGS	 := -O2 -o $(PROGNAME)
+SOURCES	 := *.c
+
+$(PROGPATH): $(SOURCES)
+	@ $(CC) $(CFLAGS) $(SOURCES)
+	@ mv $(PROGNAME) $(BUILDDIR)
