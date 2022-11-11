@@ -1,4 +1,4 @@
-class ListNode {
+class _ListNode {
   init(value){
     this.value = value;
     this.next = nil;
@@ -26,7 +26,7 @@ class List {
   }
 
   push(value){
-    var newValue = ListNode(value);
+    var newValue = _ListNode(value);
     if(this.rootnode == nil){
       this.rootnode = newValue;
       this.length = this.length + 1;
@@ -45,6 +45,13 @@ class List {
     return e;
   }
 
+  set(idx, value){
+    if(idx < 0) return;
+    if(idx > this.length) return;
+    var e = this._at(idx);
+    e.value = value;
+  }
+
   foreach(fn){
     var e = this.rootnode;
     for(var i = 0; i < this.length; i = i + 1){
@@ -52,8 +59,6 @@ class List {
       e = e.next;
     }
   }
-
-  set(idx, value){}
 
   _at(idx){
     var e = this.rootnode;
@@ -65,24 +70,4 @@ class List {
     }
     return e;
   }
-}
-
-var list = List();
-var randomNode = ListNode("value");
-
-list.push(12);
-list.push("string");
-list.push(nil);
-list.push(true);
-list.push(randomNode);
-
-fun printer(value){
-  print value;
-  print "used printer lol";
-}
-
-list.foreach(printer);
-
-for(var i = 0; i < list.length; i = i + 1){
-  print list.get(i);
 }

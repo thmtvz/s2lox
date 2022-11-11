@@ -1,0 +1,23 @@
+class _Node{
+  init(value){
+    this.value = value;
+    this.l = nil;
+    this.r = nil;
+  }
+}
+
+class Bst{
+  init(){
+    this.root = nil;
+  }
+  
+  insert(value){
+    if(this.root == nil){
+      var newNode = _Node(value);
+      this.root = newNode;
+      return;
+    }
+    var n = this.root;
+    //finish this
+  }
+}
