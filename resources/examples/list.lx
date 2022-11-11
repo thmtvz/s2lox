@@ -3,14 +3,6 @@ class _ListNode {
     this.value = value;
     this.next = nil;
   }
-  
-  setnext(next){
-    this.next = next;
-  }
-  
-  setvalue(value){
-    this.value = value;
-  }
 }
 
 class List {
