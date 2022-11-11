@@ -83,6 +83,7 @@ function bufferedWriteToFile(filepath){
     ];
 
     let stmtClasses = [
+	{name: "Import",	body: "Token name"},
 	{name: "Block",		body: "List<Stmt> statements"},
 	{name: "Class",		body: "Token name, Expr.Variable superClass, " +
 	 "List<Stmt.Function> methods"},

@@ -3,12 +3,12 @@ GENAST	 := tool/genAst.js
 
 $(GENAST):
 	@ echo "Generating ast"
-	./$(GENAST)
+	./$(GENAST) java/com/thmtvz/s2lox/
 
 java: $(GENAST)
 	@ $(MAKE) -C java BUILDDIR=$(BUILDDIR)
 
-javadebug: genast
+javadebug: $(GENAST)
 	@ $(MAKE) -C java BUILDDIR=$(BUILDDIR) DEBUG=debug
 
 clean:

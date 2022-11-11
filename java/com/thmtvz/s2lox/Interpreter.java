@@ -5,6 +5,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.file.NoSuchFileException;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import static com.thmtvz.s2lox.TokenType.*;
 
@@ -423,6 +430,23 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
 	}
 
 	throw new RuntimeError(expr.name, "Only instances have properties.");
+    }
+
+    @Override    
+    public Void visitImportStmt(Stmt.Import stmt){
+	String filename = stmt.name.literal + ".lx";
+	byte[] content = {};
+
+	try{
+	    content = Files.readAllBytes(Paths.get(filename));
+	} catch(NoSuchFileException e){
+	    S2lox.error(stmt.name, "Module not found.");
+	} catch(IOException e){
+	    System.out.println(e);
+	}
+
+	S2lox.run(new String(content, Charset.defaultCharset()), this);
+	return null;
     }
 
 }

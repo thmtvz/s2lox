@@ -73,6 +73,23 @@ public class S2lox{
 	interpreter.interpret(statements);
     }
 
+    static void run(String source, Interpreter interpreter){
+	Scanner scanner = new Scanner(source);
+	List<Token> tokens = scanner.scanTokens();
+
+	Parser parser = new Parser(tokens);
+	List<Stmt> statements = parser.parse();
+
+	if(hadError) return;
+
+	Resolver resolver = new Resolver(interpreter);
+	resolver.resolve(statements);
+
+	if(hadError) return;
+
+	interpreter.interpret(statements);
+    }
+
     static void error(Token token, String message){
 	if(token.type == TokenType.EOF){
 	    report(token.line, " at end", message);

@@ -88,6 +88,7 @@ class Parser{
     }
 
     private Stmt statement(){
+	if(match(IMPORT)) return importStatement();
 	if(match(FOR)) return forStatement();
 	if(match(IF)) return ifStatement();
 	if(match(PRINT)) return printStatement();
@@ -95,6 +96,13 @@ class Parser{
 	if(match(WHILE)) return whileStatement();
 	if(match(LEFT_BRACE)) return new Stmt.Block(block());
 	return expressionStatement();
+    }
+
+    private Stmt importStatement(){
+	Token name = consume(STRING, "Expected string for module name.");
+	consume(SEMICOLON, "Expected ';' after import statement");
+
+	return new Stmt.Import(name);
     }
 
     private Stmt forStatement(){
