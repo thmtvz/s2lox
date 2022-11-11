@@ -13,9 +13,12 @@ fun fib(n){
     return store.y;
 }
 
+print "Enter the nth digit of fibonacci sequence you want:";
+var input = number(input());
+
 var t1 = clock();
-var result = fib(30);
+var result = fib(input);
 var t2 = clock();
 
-print "fib(30) took " + toString(t2 - t1) +
+print "fib(" + toString(input) + ") took " + toString(t2 - t1) +
   " time to complete and returned " + toString(result);

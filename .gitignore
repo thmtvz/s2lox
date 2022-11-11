@@ -1,5 +1,9 @@
 build/
 java/com/thmtvz/s2lox/Expr.java
 java/com/thmtvz/s2lox/Stmt.java
+<<<<<<< HEAD
 java/com/thmtvz/s2lox/TAGS
 
+=======
+java/com/thmtvz/s2lox/TAGS
+>>>>>>> examples

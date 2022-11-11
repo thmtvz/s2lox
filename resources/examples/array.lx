@@ -1,0 +1,88 @@
+class ListNode {
+  init(value){
+    this.value = value;
+    this.next = nil;
+  }
+  
+  setnext(next){
+    this.next = next;
+  }
+  
+  setvalue(value){
+    this.value = value;
+  }
+}
+
+class List {
+  init(){
+    this.rootnode = nil;
+    this.length = 0;
+  }
+
+  get(index){
+    if(index > this.length - 1) return nil;
+    if(index < 0) return nil;
+    return this._at(index).value;
+  }
+
+  push(value){
+    var newValue = ListNode(value);
+    if(this.rootnode == nil){
+      this.rootnode = newValue;
+      this.length = this.length + 1;
+      return;
+    }
+    var end = this._at(this.length);
+    end.next = newValue;
+    this.length = this.length + 1;
+  }
+
+  pop(){
+    var newLast = this._at(this.length - 1);
+    var e = newLast.value;
+    newLast.next = nil;
+    this.length = this.length - 1;
+    return e;
+  }
+
+  foreach(fn){
+    var e = this.rootnode;
+    for(var i = 0; i < this.length; i = i + 1){
+      fn(e.value);
+      e = e.next;
+    }
+  }
+
+  set(idx, value){}
+
+  _at(idx){
+    var e = this.rootnode;
+    var i = 0;
+    while(i < idx){
+      if(e.next == nil) return e;
+      e = e.next;
+      i = i + 1;
+    }
+    return e;
+  }
+}
+
+var list = List();
+var randomNode = ListNode("value");
+
+list.push(12);
+list.push("string");
+list.push(nil);
+list.push(true);
+list.push(randomNode);
+
+fun printer(value){
+  print value;
+  print "used printer lol";
+}
+
+list.foreach(printer);
+
+for(var i = 0; i < list.length; i = i + 1){
+  print list.get(i);
+}

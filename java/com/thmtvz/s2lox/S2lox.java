@@ -59,16 +59,10 @@ public class S2lox{
     static void run(String source){
 	Scanner scanner = new Scanner(source);
 	List<Token> tokens = scanner.scanTokens();
-	// for(Token tok :tokens){
-	//     System.out.println(tok);
-	// }
+
 	Parser parser = new Parser(tokens);
 	List<Stmt> statements = parser.parse();
-	// for(Stmt statement : statements){
-	//     System.out.print("{STATEMENT: ");
-	//     System.out.print(statement);
-	//     System.out.print("}");
-	// }
+
 	if(hadError) return;
 
 	Resolver resolver = new Resolver(interpreter);
