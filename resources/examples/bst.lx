@@ -12,12 +12,31 @@ class Bst{
   }
   
   insert(value){
-    if(this.root == nil){
-      var newNode = _Node(value);
-      this.root = newNode;
-      return;
+    var newNode = _Node(value);
+    var nodeX = this.root;
+    var nodeY = nil;
+    while(nodeX != nil){
+      nodeY = nodeX;
+      if(value < nodeX.value){
+	nodeX = nodeX.l;
+      } else {
+	nodeX = nodeX.r;
+      }
     }
-    var n = this.root;
-    //finish this
+    if(nodeY == nil) this.root = newNode;
+    else if(value < nodeY.value) nodeY.l = newNode;
+    else if(value > nodeY.value) nodeY.r = newNode;
+  }
+  
+  inOrderWalk(){
+    this._inOrderWalk(this.root);
+  }
+
+  _inOrderWalk(node){
+    if(node != nil){
+      this._inOrderWalk(node.l);
+      print node.value;
+      this._inOrderWalk(node.r);
+    }
   }
 }
