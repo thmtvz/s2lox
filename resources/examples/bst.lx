@@ -1,0 +1,42 @@
+class _Node{
+  init(value){
+    this.value = value;
+    this.l = nil;
+    this.r = nil;
+  }
+}
+
+class Bst{
+  init(){
+    this.root = nil;
+  }
+  
+  insert(value){
+    var newNode = _Node(value);
+    var nodeX = this.root;
+    var nodeY = nil;
+    while(nodeX != nil){
+      nodeY = nodeX;
+      if(value < nodeX.value){
+	nodeX = nodeX.l;
+      } else {
+	nodeX = nodeX.r;
+      }
+    }
+    if(nodeY == nil) this.root = newNode;
+    else if(value < nodeY.value) nodeY.l = newNode;
+    else if(value > nodeY.value) nodeY.r = newNode;
+  }
+  
+  inOrderWalk(){
+    this._inOrderWalk(this.root);
+  }
+
+  _inOrderWalk(node){
+    if(node != nil){
+      this._inOrderWalk(node.l);
+      print node.value;
+      this._inOrderWalk(node.r);
+    }
+  }
+}
