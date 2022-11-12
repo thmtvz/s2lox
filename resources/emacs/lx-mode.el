@@ -61,4 +61,4 @@
   (setq-local comment-end "")
   (setq font-lock-defaults '(lx-font-lock-definitions)))
 
-(provide 'lox-mode)
+(provide 'lx-mode)
