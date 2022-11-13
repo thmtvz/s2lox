@@ -24,13 +24,13 @@ class List {
       this.length = this.length + 1;
       return;
     }
-    var end = this._at(this.length);
+    var end = this._at(this.length - 1);
     end.next = newValue;
     this.length = this.length + 1;
   }
 
   pop(){
-    var newLast = this._at(this.length - 1);
+    var newLast = this._at(this.length - 2);
     var e = newLast.value;
     newLast.next = nil;
     this.length = this.length - 1;
@@ -54,11 +54,8 @@ class List {
 
   _at(idx){
     var e = this.rootnode;
-    var i = 0;
-    while(i < idx){
-      if(e.next == nil) return e;
+    for(var i = 0; i < idx; i = i + 1){
       e = e.next;
-      i = i + 1;
     }
     return e;
   }
