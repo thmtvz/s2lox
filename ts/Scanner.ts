@@ -1,76 +1,78 @@
-import token from "./token";
-import tokenType from "./tokenType";
-import runner from "./runner";
+import Token from "./Token";
+import TokenType from "./TokenType";
+import Runner from "./Runner";
 
-class Scanner {
+export default class Scanner {
     private readonly source: string;
-    private readonly tokens: token[];
+    private readonly tokens: Token[];
+    private readonly runner: Runner;
     private static readonly keywords = {
-	"and"		:	 tokenType.AND,
-	"class"		:	 tokenType.CLASS,
-	"else"		:	 tokenType.ELSE,
-	"false"		:	 tokenType.FALSE,
-	"for"		:	 tokenType.FOR,
-	"fun"		:	 tokenType.FUN,
-	"if"		:	 tokenType.IF,
-	"nil"		:	 tokenType.NIL,
-	"or"		:	 tokenType.OR,
-	"print"		:	 tokenType.PRINT,
-	"return"	:	 tokenType.RETURN,
-	"super"		:	 tokenType.SUPER,
-	"this"		:	 tokenType.THIS,
-	"true"		:	 tokenType.TRUE,
-	"var"		:	 tokenType.VAR,
-	"while"		:	 tokenType.WHILE,
-	"import"	:	 tokenType.IMPORT,
+	"and"		:	 TokenType.AND,
+	"class"		:	 TokenType.CLASS,
+	"else"		:	 TokenType.ELSE,
+	"false"		:	 TokenType.FALSE,
+	"for"		:	 TokenType.FOR,
+	"fun"		:	 TokenType.FUN,
+	"if"		:	 TokenType.IF,
+	"nil"		:	 TokenType.NIL,
+	"or"		:	 TokenType.OR,
+	"print"		:	 TokenType.PRINT,
+	"return"	:	 TokenType.RETURN,
+	"super"		:	 TokenType.SUPER,
+	"this"		:	 TokenType.THIS,
+	"true"		:	 TokenType.TRUE,
+	"var"		:	 TokenType.VAR,
+	"while"		:	 TokenType.WHILE,
+	"import"	:	 TokenType.IMPORT,
     };
     private start = 0;
     private current = 0;
     private line = 1;
 
-    constructor(src){
+    constructor(runner, src){
 	this.source = src;
+	this.runner = runner;
     }
 
-    scanTokens(): token[]{
+    scanTokens(): Token[]{
 	while(1){
 	    this.start = this.current;
 	    this.scanToken();
 	}
-	this.tokens.push(new token(tokenType.EOF, "", null, this.line));
+	this.tokens.push(new Token(TokenType.EOF, "", null, this.line));
 	return this.tokens;
     }
     
     scanToken(): void{
 	const char = this.advance();
 	switch (char) {
-	case '(': this.addToken(tokenType.LEFT_PAREN); break;
-	case ')': this.addToken(tokenType.RIGHT_PAREN); break;
-	case '{': this.addToken(tokenType.LEFT_BRACE); break;
-	case '}': this.addToken(tokenType.RIGHT_BRACE); break;
-	case ',': this.addToken(tokenType.COMMA); break;
-	case '.': this.addToken(tokenType.DOT); break;
-	case '-': this.addToken(tokenType.MINUS); break;
-	case '+': this.addToken(tokenType.PLUS); break;
-	case ';': this.addToken(tokenType.SEMICOLON); break;
-	case '*': this.addToken(tokenType.STAR); break;
+	case '(': this.addToken(TokenType.LEFT_PAREN); break;
+	case ')': this.addToken(TokenType.RIGHT_PAREN); break;
+	case '{': this.addToken(TokenType.LEFT_BRACE); break;
+	case '}': this.addToken(TokenType.RIGHT_BRACE); break;
+	case ',': this.addToken(TokenType.COMMA); break;
+	case '.': this.addToken(TokenType.DOT); break;
+	case '-': this.addToken(TokenType.MINUS); break;
+	case '+': this.addToken(TokenType.PLUS); break;
+	case ';': this.addToken(TokenType.SEMICOLON); break;
+	case '*': this.addToken(TokenType.STAR); break;
 	case '!':
-	    this.addToken(this.match('=') ? tokenType.BANG_EQUAL : tokenType.BANG);
+	    this.addToken(this.match('=') ? TokenType.BANG_EQUAL : TokenType.BANG);
 	    break;
 	case '=':
-	    this.addToken(this.match('=') ? tokenType.EQUAL_EQUAL : tokenType.EQUAL);
+	    this.addToken(this.match('=') ? TokenType.EQUAL_EQUAL : TokenType.EQUAL);
 	    break;
 	case '<':
-	    this.addToken(this.match('=') ? tokenType.LESS_EQUAL : tokenType.LESS);
+	    this.addToken(this.match('=') ? TokenType.LESS_EQUAL : TokenType.LESS);
 	    break;
 	case '>':
-	    this.addToken(this.match('=') ? tokenType.GREATER_EQUAL : tokenType.GREATER);
+	    this.addToken(this.match('=') ? TokenType.GREATER_EQUAL : TokenType.GREATER);
 	    break;
 	case '/':
 	    if(this.match('/')){
 		while(this.peek() != '\n' && !this.isAtEnd()) this.advance();
 	    } else {
-		this.addToken(tokenType.SLASH);
+		this.addToken(TokenType.SLASH);
 	    }
 	    break;
 	case '\n':
@@ -89,7 +91,7 @@ class Scanner {
 	    } else {
 		//make the runner thing
 		//WRONG!!
-		runner.error(new token(tokenType.EOF, "", null, this.line), "Unexpected character.");
+		this.runner.error(new Token(TokenType.EOF, "", null, this.line), "Unexpected character.");
 	    }
 	    break;
 	}
@@ -107,13 +109,13 @@ class Scanner {
 	return true;
     }
 
-    private addToken(t: tokenType, literal?: Object): void{
+    private addToken(t: TokenType, literal?: Object): void{
 	const text = this.source.slice(this.start, this.current);
 	if(!literal){
-	    this.tokens.push(new token(t, text, null, this.line));
+	    this.tokens.push(new Token(t, text, null, this.line));
 	    return;
 	}
-	this.tokens.push(new token(t, text, literal, this.line));
+	this.tokens.push(new Token(t, text, literal, this.line));
     }
 
     private peek(): string{
@@ -137,7 +139,7 @@ class Scanner {
 	this.advance();
 	const value = this.source.slice(this.start + 1,
 					this.current - 1);
-	this.addToken(tokenType.STRING, value);
+	this.addToken(TokenType.STRING, value);
     }
 
     private isDigit(c: string): boolean{
@@ -150,7 +152,7 @@ class Scanner {
 	    this.advance();
 	    while(this.isDigit(this.peek())) this.advance();
 	}
-	this.addToken(tokenType.NUMBER, parseFloat(
+	this.addToken(TokenType.NUMBER, parseFloat(
 	    this.source.slice(this.start, this.current)));
     }
 
@@ -164,7 +166,7 @@ class Scanner {
 	while(this.isAlphaNumeric(this.peek())) this.advance();
 	const text = this.source.slice(this.start, this.current);
 	let t = Scanner.keywords[text];
-	if(t == undefined) t = tokenType.IDENTIFIER;
+	if(t == undefined) t = TokenType.IDENTIFIER;
 	this.addToken(t);
     }
 

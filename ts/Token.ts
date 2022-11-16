@@ -1,7 +1,7 @@
-import tokenType from "./tokenType";
+import TokenType from "./TokenType";
 
-export default class token{
-    readonly type: tokenType;
+export default class Token{
+    readonly type: TokenType;
     readonly lexeme: string;
     readonly literal: any;
     readonly line: number;
