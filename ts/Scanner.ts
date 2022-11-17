@@ -3,9 +3,8 @@ import TokenType from "./TokenType";
 import Runner from "./Runner";
 
 export default class Scanner {
-    private readonly source: string;
-    private readonly tokens: Token[];
-    private readonly runner: Runner;
+
+    private readonly tokens: Token[] = [];
     private static readonly keywords = {
 	"and"		:	 TokenType.AND,
 	"class"		:	 TokenType.CLASS,
@@ -29,10 +28,10 @@ export default class Scanner {
     private current = 0;
     private line = 1;
 
-    constructor(runner, src){
-	this.source = src;
-	this.runner = runner;
-    }
+    constructor(
+	private readonly source: string,
+	private readonly runner: Runner,
+    ) {}
 
     scanTokens(): Token[]{
 	while(1){
