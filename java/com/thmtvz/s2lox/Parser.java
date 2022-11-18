@@ -38,7 +38,9 @@ class Parser{
 	}
     }
 
+    //update return type??
     private Stmt classDeclaration(){
+	//fix this typo pls
 	Token name = consume(IDENTIFIER, "Expecter class name.");
 
 	Expr.Variable superClass = null;
@@ -59,6 +61,7 @@ class Parser{
 
     private Stmt.Function function(String kind){
 	Token name = consume(IDENTIFIER, "Expect " + kind + " name.");
+	//fix spacing after "after"
 	consume(LEFT_PAREN, "Expect '(' after" + kind + " name.");
 	List<Token> parameters = new ArrayList<>();
 	if(!check(RIGHT_PAREN)){
@@ -99,6 +102,7 @@ class Parser{
     }
 
     private Stmt importStatement(){
+	//fix this string
 	Token name = consume(STRING, "Expected string for module name.");
 	consume(SEMICOLON, "Expected ';' after import statement");
 
@@ -201,6 +205,8 @@ class Parser{
     }
 
     private void synchronize(){
+	//added import to sync
+
 	advance();
 
 	while(!isAtEnd()){
@@ -215,6 +221,7 @@ class Parser{
 	    case WHILE:
 	    case PRINT:
 	    case RETURN:
+	    case IMPORT:
 		return;
 	    }
 
@@ -360,7 +367,7 @@ class Parser{
 
     private Expr primary(){
 	if(match(FALSE)) return new Expr.Literal(false);
-	if(match(TRUE)) return new Expr.Literal(true);
+ 	if(match(TRUE)) return new Expr.Literal(true);
 	if(match(NIL)) return new Expr.Literal(null);
 
 	if(match(NUMBER, STRING)){
