@@ -38,10 +38,8 @@ class Parser{
 	}
     }
 
-    //update return type??
     private Stmt classDeclaration(){
-	//fix this typo pls
-	Token name = consume(IDENTIFIER, "Expecter class name.");
+	Token name = consume(IDENTIFIER, "Expected class name.");
 
 	Expr.Variable superClass = null;
 	if(match(LESS)){
@@ -61,8 +59,7 @@ class Parser{
 
     private Stmt.Function function(String kind){
 	Token name = consume(IDENTIFIER, "Expect " + kind + " name.");
-	//fix spacing after "after"
-	consume(LEFT_PAREN, "Expect '(' after" + kind + " name.");
+	consume(LEFT_PAREN, "Expect '(' after " + kind + " name.");
 	List<Token> parameters = new ArrayList<>();
 	if(!check(RIGHT_PAREN)){
 	    do {
@@ -102,8 +99,7 @@ class Parser{
     }
 
     private Stmt importStatement(){
-	//fix this string
-	Token name = consume(STRING, "Expected string for module name.");
+	Token name = consume(STRING, "Expected module name.");
 	consume(SEMICOLON, "Expected ';' after import statement");
 
 	return new Stmt.Import(name);
@@ -205,8 +201,6 @@ class Parser{
     }
 
     private void synchronize(){
-	//added import to sync
-
 	advance();
 
 	while(!isAtEnd()){
