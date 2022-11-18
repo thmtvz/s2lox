@@ -3,34 +3,33 @@ import TokenType from "./TokenType";
 import Runner from "./Runner";
 
 export default class Scanner {
-
     private readonly tokens: Token[] = [];
-    private static readonly keywords = {
-	"and"		:	 TokenType.AND,
-	"class"		:	 TokenType.CLASS,
-	"else"		:	 TokenType.ELSE,
-	"false"		:	 TokenType.FALSE,
-	"for"		:	 TokenType.FOR,
-	"fun"		:	 TokenType.FUN,
-	"if"		:	 TokenType.IF,
-	"nil"		:	 TokenType.NIL,
-	"or"		:	 TokenType.OR,
-	"print"		:	 TokenType.PRINT,
-	"return"	:	 TokenType.RETURN,
-	"super"		:	 TokenType.SUPER,
-	"this"		:	 TokenType.THIS,
-	"true"		:	 TokenType.TRUE,
-	"var"		:	 TokenType.VAR,
-	"while"		:	 TokenType.WHILE,
-	"import"	:	 TokenType.IMPORT,
+    private static readonly keywords: {[k: string]: TokenType} = {
+	'"and"'		:	 TokenType.AND,
+	'"class"'	:	 TokenType.CLASS,
+	'"else"'	:	 TokenType.ELSE,
+	'"false"'	:	 TokenType.FALSE,
+	'"for"'		:	 TokenType.FOR,
+	'"fun"'		:	 TokenType.FUN,
+	'"if"'		:	 TokenType.IF,
+	'"nil"'		:	 TokenType.NIL,
+	'"or"'		:	 TokenType.OR,
+	'"print"'	:	 TokenType.PRINT,
+	'"return"'	:	 TokenType.RETURN,
+	'"super"'	:	 TokenType.SUPER,
+	'"this"'	:	 TokenType.THIS,
+	'"true"'	:	 TokenType.TRUE,
+	'"var"'		:	 TokenType.VAR,
+	'"while"'	:	 TokenType.WHILE,
+	'"import"'	:	 TokenType.IMPORT,
     };
     private start = 0;
     private current = 0;
     private line = 1;
 
     constructor(
-	private readonly source: string,
 	private readonly runner: Runner,
+	private readonly source: string,
     ) {}
 
     scanTokens(): Token[]{
@@ -164,7 +163,8 @@ export default class Scanner {
     private identifier(): void{
 	while(this.isAlphaNumeric(this.peek())) this.advance();
 	const text = this.source.slice(this.start, this.current);
-	let t = Scanner.keywords[text];
+	let t: TokenType;
+	t = Scanner.keywords[text];
 	if(t == undefined) t = TokenType.IDENTIFIER;
 	this.addToken(t);
     }

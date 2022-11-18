@@ -1,7 +1,9 @@
-import Scanner from "./Scanner";
-import Token from "./Token";
-import TokenType from "./TokenType";
-import Interpreter from "./Interpreter";
+import Scanner from "Scanner";
+import Token from "Token";
+import TokenType from "TokenType";
+import Interpreter from "Interpreter";
+import RuntimeError from "RuntimeError";
+import Parser from "Parser";
 
 export default class Runner{
 
@@ -57,7 +59,7 @@ export default class Runner{
     }
 
     public error(tok: Token, message: string){
-	if(tok.type == TokenType.EOF){
+	if(tok.t == TokenType.EOF){
 	    this.report(tok.line, " at end", message);
 	} else this.report(tok.line, " at '" + tok.lexeme + "'", message);
     }
@@ -68,8 +70,8 @@ export default class Runner{
 	this.hadError = true;
     }
 
-    public runtimeError(e: runtimeError){
-	this.output(e.getMessage()/*fixthis*/ + "\n[line " +
+    public runtimeError(e: RuntimeError){
+	this.output(e.message + "\n[line " +
 	    e.token.line + "]");
 	this.hadRuntimeError = true;
     }
