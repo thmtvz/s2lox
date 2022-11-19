@@ -45,7 +45,7 @@ export default class Runner{
 	const scanner = new Scanner(this, source);
 	const tokens = scanner.scanTokens();
 
-	const parser = new Parser(tokens);
+	const parser = new Parser(this, tokens);
 	const statements = parser.parse();
 
 	if(this.hadError) return;
