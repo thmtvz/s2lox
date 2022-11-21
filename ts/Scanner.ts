@@ -22,6 +22,7 @@ export default class Scanner {
 	'"var"'		:	 TokenType.VAR,
 	'"while"'	:	 TokenType.WHILE,
 	'"import"'	:	 TokenType.IMPORT,
+	'"noop"'        :        TokenType.NOOP,
     };
     private start = 0;
     private current = 0;
@@ -87,8 +88,6 @@ export default class Scanner {
 	    } else if(this.isAlpha(char)){
 		this.identifier();
 	    } else {
-		//make the runner thing
-		//WRONG!!
 		this.runner.error(new Token(TokenType.EOF, "", null, this.line), "Unexpected character.");
 	    }
 	    break;
