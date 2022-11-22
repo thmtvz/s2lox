@@ -4,6 +4,7 @@ import TokenType from "TokenType";
 import Interpreter from "Interpreter";
 import RuntimeError from "RuntimeError";
 import Parser from "Parser";
+import Resolver from "Resolver";
 
 export default class Runner{
 
@@ -50,7 +51,7 @@ export default class Runner{
 
 	if(this.hadError) return;
 
-	const resolver = new Resolver(this.interpreter);
+	const resolver = new Resolver(this, this.interpreter);
 	resolver.resolve(statements);
 
 	if(this.hadError) return;

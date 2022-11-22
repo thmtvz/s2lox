@@ -72,7 +72,7 @@ function bufferedWriteToFile(filepath){
 	{name: "Call",		body: "Expr callee, Token paren, Expr[] args"},
 	{name: "Get",		body: "Expr obj, Token name"},
 	{name: "Grouping",	body: "Expr expression"},
-	{name: "Literal",	body: "any value"},
+	{name: "Literal",	body: "S2ltype value"},
 	{name: "Set",		body: "Expr obj, Token name, Expr value"},
 	{name: "Super",		body: "Token keyword, Token method"},
 	{name: "This",		body: "Token keyword"},
@@ -101,6 +101,7 @@ function bufferedWriteToFile(filepath){
 
     function genSource(classes, prefix, writeln){
 	writeln("import Token from \"Token\";");
+	writeln("import S2ltype from \"S2ltype\"");
 	if(prefix === "Stmt"){
 	    writeln("import { Expr } from \"Expr\";");
 	    for(let c of exprClasses){
