@@ -1,15 +1,17 @@
 interface s<T> {
     empty(): boolean;
     peek(): T | null;
-    pop(): T;
+    pop(): T | undefined;
     push(item: T): void;
     get(index: number): T;
+    size(): number;
 }
 
 export default class Stack<T> implements s<T>{
-    constructor(
-	private s: T[];
-    ) {}
+
+    private s: T[] = [];
+
+    constructor() {}
     
     public empty(): boolean{
 	return this.s.length === 0;
@@ -20,7 +22,7 @@ export default class Stack<T> implements s<T>{
 	return this.s[this.s.length - 1];
     }
 
-    public pop(): T{
+    public pop(): T | undefined{
 	return this.s.pop();
     }
 
@@ -30,6 +32,10 @@ export default class Stack<T> implements s<T>{
     }
 
     public get(index: number): T{
-	return t.s[index];
+	return this.s[index];
+    }
+
+    public size(): number{
+	return this.s.length;
     }
 }

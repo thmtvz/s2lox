@@ -1,4 +1,5 @@
 import { Expr } from "Expr";
+import { ExprVisitor } from "Expr"
 import { AssignExpr } from "Expr";
 import { BinaryExpr } from "Expr";
 import { CallExpr } from "Expr";
@@ -12,6 +13,7 @@ import { LogicalExpr } from "Expr";
 import { UnaryExpr } from "Expr";
 import { VariableExpr } from "Expr";
 import { Stmt } from "Stmt";
+import { StmtVisitor } from "Stmt";
 import { NoopStmt } from "Stmt";
 import { ImportStmt } from "Stmt";
 import { BlockStmt } from "Stmt";
@@ -29,7 +31,7 @@ import S2ltype from "S2ltype";
 export default class Interpreter implements ExprVisitor<S2ltype>, StmtVisitor<void>{
     
     readonly globals = new Environment();
-    private environment: Environment = globals;
+    private environment: Environment = this.globals;
     private readonly locals: {[k: Expr]: number} = {};
     
     constructor(

@@ -1,4 +1,5 @@
 import { Expr } from "Expr";
+import { ExprVisitor } from "Expr";
 import { AssignExpr } from "Expr";
 import { BinaryExpr } from "Expr";
 import { CallExpr } from "Expr";
@@ -12,6 +13,7 @@ import { LogicalExpr } from "Expr";
 import { UnaryExpr } from "Expr";
 import { VariableExpr } from "Expr";
 import { Stmt } from "Stmt";
+import { StmtVisitor } from "Stmt";
 import { NoopStmt } from "Stmt";
 import { ImportStmt } from "Stmt";
 import { BlockStmt } from "Stmt";
@@ -23,6 +25,7 @@ import { PrintStmt } from "Stmt";
 import { ReturnStmt } from "Stmt";
 import { VarStmt } from "Stmt";
 import { WhileStmt } from "Stmt";
+import Token from "Token";
 import Stack from "Stack";
 import Mp from "Map";
 import Runner from "Runner";
@@ -41,7 +44,7 @@ enum ClassType{
     SUBCLASS
 }
 
-class Resolver implements ExprVisitor<void>, StmtVisitor<void>{
+export default class Resolver implements ExprVisitor<void>, StmtVisitor<void>{
     
     private readonly scopes = new Stack<Mp>();
     private currentFunction: FunctionType = FunctionType.NONE;
@@ -62,6 +65,10 @@ class Resolver implements ExprVisitor<void>, StmtVisitor<void>{
 	stmtOrExpr.accept(this);
     }
     
+    public visitNoopStmt(stmt: NoopStmt): void{
+	return;
+    }
+
     public visitImportStmt(stmt: ImportStmt): void{
 	return;
     }
@@ -74,29 +81,29 @@ class Resolver implements ExprVisitor<void>, StmtVisitor<void>{
     }
     
     public visitClassStmt(stmt: ClassStmt): void{
-	let enclosingClass: ClassType = currentClass;
-	this.this.currentClass = ClassType.CLASS;
+	let enclosingClass: ClassType = this.currentClass;
+	this.currentClass = ClassType.CLASS;
 
 	this.declare(stmt.name);
 	this.define(stmt.name);
 
 	if(stmt.superClass != null){
 	    if(stmt.name.lexeme === stmt.superClass.name.lexeme){
-		runner.error(stmt.superClass.name,
+		this.runner.error(stmt.superClass.name,
 			     "Class can't inherit from itself.");
 	    }
 
 	    this.resolve(stmt.superClass);
 
 	    this.beginScope();
-	    scopes.peek().put("super", true);
+	    this.scopes.peek().put("super", true);
 	}
 	
 	this.beginScope();
-	scopes.peek().put("this", true);
+	this.scopes.peek().put("this", true);
 	for(let method of stmt.methods){
-	    const declaration: FunctionType = FunctionType.METHOD;
-	    if(method.name.lexeme.equals("init")){
+	    let declaration: FunctionType = FunctionType.METHOD;
+	    if(method.name.lexeme === "init"){
 		declaration = FunctionType.INITIALIZER;
 	    }
 	    this.resolveFunction(method, declaration);
@@ -138,7 +145,7 @@ class Resolver implements ExprVisitor<void>, StmtVisitor<void>{
     }
 
     public visitReturnStmt(stmt: ReturnStmt): void{
-	if(this.currentFunction == FuntionType.NONE){
+	if(this.currentFunction == FunctionType.NONE){
 	    this.runner.error(stmt.keyword,
 			      "Can't return from top-level code");
 	}
@@ -168,7 +175,7 @@ class Resolver implements ExprVisitor<void>, StmtVisitor<void>{
 	return;
     }
     
-    public visitAssignExpr(expr AssignExpr): void{
+    public visitAssignExpr(expr: AssignExpr): void{
 	this.resolve(expr.value);
 	this.resolveLocal(expr, expr.name);
 	return;
@@ -183,19 +190,19 @@ class Resolver implements ExprVisitor<void>, StmtVisitor<void>{
     public visitCallExpr(expr: CallExpr): void{
 	this.resolve(expr.callee);
 
-	for(let argument of expr.arguments){
+	for(let argument of expr.args){
 	    this.resolve(argument);
 	}
 
-	return null;
-    }
-    
-    public visitGetExpr(expr: GetExpr): void{
-	this.resolve(expr.object);
 	return;
     }
     
-    public visitGroupigExpr(expr: GroupingExpr){
+    public visitGetExpr(expr: GetExpr): void{
+	this.resolve(expr.obj);
+	return;
+    }
+    
+    public visitGroupingExpr(expr: GroupingExpr){
 	this.resolve(expr.expression);
 	return;
     }
@@ -208,11 +215,11 @@ class Resolver implements ExprVisitor<void>, StmtVisitor<void>{
 
     public visitSetExpr(expr: SetExpr): void{
 	this.resolve(expr.value);
-	this.resolve(expr.object);
+	this.resolve(expr.obj);
 	return;
     }
     
-    public visitSuperExpr(expr: SetExpr): void{
+    public visitSuperExpr(expr: SuperExpr): void{
 	if(this.currentClass == ClassType.NONE){
 	    this.runner.error(expr.keyword,
 			"Can't use 'super' outside of a class.");
@@ -239,9 +246,9 @@ class Resolver implements ExprVisitor<void>, StmtVisitor<void>{
 	return;
     }
     
-    public visitVariableExpr(expr VariableExpr): void{
-	if(!scopes.isEmpty() &&
-	    scopes.peek().get(expr.name.lexeme) == false){
+    public visitVariableExpr(expr: VariableExpr): void{
+	if(!this.scopes.empty() &&
+	    this.scopes.peek().get(expr.name.lexeme) == false){
 	    this.runner.error(expr.name,
 			      "Can't read local variable in its own initializer.");
 	}
@@ -250,8 +257,8 @@ class Resolver implements ExprVisitor<void>, StmtVisitor<void>{
 	return;
     }
 
-    private resolveFunction(fn: FnStmt, t: FunctionType): void{
-	const enclosingFunction = currentFunction;
+    private resolveFunction(fn: FunctionStmt, t: FunctionType): void{
+	const enclosingFunction = this.currentFunction;
 	this.currentFunction = t;
 
 	this.beginScope();
@@ -278,8 +285,9 @@ class Resolver implements ExprVisitor<void>, StmtVisitor<void>{
     }
 
     private declare(name: Token): void{
-	if(this.scopes.isEmpty()) return;
+	//if(this.scopes.empty()) return; //🤨🤨
 	const scope = this.scopes.peek();
+	if(scope === null) return; //🤨🤨
 	if(scope.contains(name.lexeme)){
 	    this.runner.error(name, "Already variable name with this name in this scope");
 	}
@@ -287,15 +295,16 @@ class Resolver implements ExprVisitor<void>, StmtVisitor<void>{
     }
 
     private define(name: Token): void{
-	if(this.scopes.isEmpty()) return;
-	this.scopes.peek().put(name.lexeme, true);
+	const scope = this.scopes.peek();
+	if(scope === null) return;
+	scope.put(name.lexeme, true);
 	return;
     }
 
     private resolveLocal(expr: Expr, name: Token): void{
-	for(let i = scopes.size() - 1; i >= 0; --i){
+	for(let i = this.scopes.size() - 1; i >= 0; --i){
 	    if(this.scopes.get(i).contains(name.lexeme)){
-		this.interpreter.resolve(expr, scopes.size() - i - 1);
+		this.interpreter.resolve(expr, this.scopes.size() - i - 1);
 		return;
 	    }
 	}

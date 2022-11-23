@@ -9,7 +9,7 @@ interface m{
 
 type p = {[k: string]: boolean}
 
-class Mp implements m{
+export default class Mp implements m{
     
     private m: p = {};
     private s = 0;

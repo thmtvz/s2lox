@@ -56,7 +56,7 @@ export default class Parser{
 	} catch(e){
 	    if(e instanceof ParseError)
 		this.synchronize();
-	    return new NoopStmt(new LiteralExpr(null));
+	    return new NoopStmt();
 	}
     } 
 
@@ -126,7 +126,7 @@ export default class Parser{
     private noopStatement(): Stmt{
 	this.consume(TokenType.SEMICOLON, "Expected ';' after noop statement");
 	
-	return new NoopStmt(new LiteralExpr(null));
+	return new NoopStmt();
     }
 
     private importStatement(): Stmt{

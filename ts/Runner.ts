@@ -10,13 +10,15 @@ export default class Runner{
 
     private hadError: boolean = false;
     private hadRuntimeError: boolean = false;
-    private readonly interpreter: Interpreter = new Interpreter();
+    private readonly interpreter:  Interpreter;
 
     constructor(
 	private readonly readline: () => string,
 	private readonly readfile: (s: string) => string,
 	private readonly output: (o: string) => void
-    ){}
+    ){
+	this.interpreter = new Interpreter(this);
+    }
 
     public runPrompt(): void{
 	let lineNo = 1;
@@ -72,8 +74,10 @@ export default class Runner{
     }
 
     public runtimeError(e: RuntimeError){
-	this.output(e.message + "\n[line " +
-	    e.token.line + "]");
+	if(!(e === undefined)){
+	    this.output(e.message + "\n[line " +
+		e.token.line + "]");
+	}
 	this.hadRuntimeError = true;
     }
 }

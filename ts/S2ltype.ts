@@ -1,1 +1,3 @@
-export default type s2ltype = number | string  | boolean | null;
+type S2ltype = number | string  | boolean | null;
+
+export {S2ltype as default};

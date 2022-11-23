@@ -82,7 +82,7 @@ function bufferedWriteToFile(filepath){
     ];
 
     let stmtClasses = [
-	{name: "Noop",          body: "LiteralExpr nil"}, //hack for ease of implementation
+	{name: "Noop",          body: ""},
 	{name: "Import",	body: "Token name"},
 	{name: "Block",		body: "Stmt[] statements"},
 	{name: "Class",		body: "Token name, VariableExpr|null superClass, " +
@@ -101,7 +101,7 @@ function bufferedWriteToFile(filepath){
 
     function genSource(classes, prefix, writeln){
 	writeln("import Token from \"Token\";");
-	writeln("import S2ltype from \"S2ltype\"");
+	writeln("import S2ltype from \"S2ltype\";");
 	if(prefix === "Stmt"){
 	    writeln("import { Expr } from \"Expr\";");
 	    for(let c of exprClasses){
@@ -121,7 +121,7 @@ function bufferedWriteToFile(filepath){
 	writeln("export interface " + prefix + "Visitor <T>{")
 	for(let c of classes){
 	    const name = c.name;
-	    writeln("  visit" + name + prefix + "<T>(" +
+	    writeln("  visit" + name + prefix + "(" +
 		    prefix.toLowerCase() + ": " + name +
 		    prefix + "): T;");
 	}
@@ -135,13 +135,18 @@ function bufferedWriteToFile(filepath){
 	    writeln("export class " + name + prefix + " implements " +
 		    prefix +"{");
 
-	    writeln("  constructor(");
-	    for(let f of bodyFields){
-		let [type, name] = f.split(" ");
-		writeln("    public " + name + ": " + type + ",");
-	    }
-	    writeln("  ) {}");
+	    if(!(bodyFields[0] === "")){
+		writeln("  constructor(");
+		
+		for(let f of bodyFields){
+		    let [type, name] = f.split(" ");
+		    writeln("    public " + name + ": " + type + ",");
+		}
 
+		writeln("  ) {}");
+	    } else {
+		writeln("  constructor () {}");
+	    }
 	    writeln();
 	    
 	    writeln("  accept <T>(visitor: " + prefix + "Visitor<T>): T{");
