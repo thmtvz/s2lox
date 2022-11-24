@@ -27,6 +27,7 @@ import { VarStmt } from "Stmt";
 import { WhileStmt } from "Stmt";
 import RuntimeError from "RuntimeError";
 import S2ltype from "S2ltype";
+import Environment from "Environment";
 
 export default class Interpreter implements ExprVisitor<S2ltype>, StmtVisitor<void>{
     

@@ -46,7 +46,7 @@ enum ClassType{
 
 export default class Resolver implements ExprVisitor<void>, StmtVisitor<void>{
     
-    private readonly scopes = new Stack<Mp>();
+    private readonly scopes = new Stack<Map<string, boolean>();
     private currentFunction: FunctionType = FunctionType.NONE;
     private currentClass: ClassType = ClassType.NONE;
 
