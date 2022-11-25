@@ -91,6 +91,7 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
 		@Override
 		public String toString() { return "<native fun>"; }
 	    });
+	//plain object without defining new class
 	globals.define("object", new S2loxClass("object", null,
 						new HashMap<String, S2loxFunction>()));
     }
@@ -229,7 +230,7 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
 	statement.accept(this);
     }
 
-    void resolve(Expr expr, int depth){
+    public void resolve(Expr expr, int depth){
 	locals.put(expr, depth);
     }
 
@@ -273,7 +274,6 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
 
     @Override
     public Void visitBlockStmt(Stmt.Block stmt){
-	//nao esquecer de dar uma olhadinha no teste sem o this aqui
 	executeBlock(stmt.statements, new Environment(this.environment));
 	return null;
     }
@@ -307,7 +307,7 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
 	if(expr.operator.type == OR){
 	    if(isTruthy(left)) return left;
 	} else {
-	    if(!isTruthy(left)) return  left;
+	    if(!isTruthy(left)) return left;
 	}
 
 	return evaluate(expr.right);
