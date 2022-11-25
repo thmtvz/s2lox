@@ -27,7 +27,6 @@ import { VarStmt } from "Stmt";
 import { WhileStmt } from "Stmt";
 import Token from "Token";
 import Stack from "Stack";
-import Mp from "Map";
 import Runner from "Runner";
 import Interpreter from "Interpreter";
 
@@ -46,7 +45,7 @@ enum ClassType{
 
 export default class Resolver implements ExprVisitor<void>, StmtVisitor<void>{
     
-    private readonly scopes = new Stack<Map<string, boolean>();
+    private readonly scopes = new Stack<Map<string, boolean>>();
     private currentFunction: FunctionType = FunctionType.NONE;
     private currentClass: ClassType = ClassType.NONE;
 
@@ -96,11 +95,14 @@ export default class Resolver implements ExprVisitor<void>, StmtVisitor<void>{
 	    this.resolve(stmt.superClass);
 
 	    this.beginScope();
-	    this.scopes.peek().put("super", true);
+	    let s = this.scopes.peek();
+	    if(s !== null) s.set("super", true); //🧐🧐
 	}
 	
 	this.beginScope();
-	this.scopes.peek().put("this", true);
+	let s = this.scopes.peek();
+	if(s !== null) s.set("this", true); //🧐🧐
+
 	for(let method of stmt.methods){
 	    let declaration: FunctionType = FunctionType.METHOD;
 	    if(method.name.lexeme === "init"){
@@ -247,8 +249,8 @@ export default class Resolver implements ExprVisitor<void>, StmtVisitor<void>{
     }
     
     public visitVariableExpr(expr: VariableExpr): void{
-	if(!this.scopes.empty() &&
-	    this.scopes.peek().get(expr.name.lexeme) == false){
+	let s = this.scopes.peek();
+	if(s !== null && s.get(expr.name.lexeme) == false){ //🧐🧐
 	    this.runner.error(expr.name,
 			      "Can't read local variable in its own initializer.");
 	}
@@ -275,7 +277,7 @@ export default class Resolver implements ExprVisitor<void>, StmtVisitor<void>{
     }
 
     private beginScope(): void{
-	this.scopes.push(new Mp());
+	this.scopes.push(new Map());
 	return;
     }
 
@@ -288,22 +290,22 @@ export default class Resolver implements ExprVisitor<void>, StmtVisitor<void>{
 	//if(this.scopes.empty()) return; //🤨🤨
 	const scope = this.scopes.peek();
 	if(scope === null) return; //🤨🤨
-	if(scope.contains(name.lexeme)){
+	if(scope.has(name.lexeme)){
 	    this.runner.error(name, "Already variable name with this name in this scope");
 	}
-	scope.put(name.lexeme, false);
+	scope.set(name.lexeme, false);
     }
 
     private define(name: Token): void{
 	const scope = this.scopes.peek();
 	if(scope === null) return;
-	scope.put(name.lexeme, true);
+	scope.set(name.lexeme, true);
 	return;
     }
 
     private resolveLocal(expr: Expr, name: Token): void{
 	for(let i = this.scopes.size() - 1; i >= 0; --i){
-	    if(this.scopes.get(i).contains(name.lexeme)){
+	    if(this.scopes.get(i).has(name.lexeme)){
 		this.interpreter.resolve(expr, this.scopes.size() - i - 1);
 		return;
 	    }

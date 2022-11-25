@@ -74,9 +74,8 @@ export default class Runner{
     }
 
     public runtimeError(e: RuntimeError){
-	if(!(e === undefined)){
-	    this.output(e.message + "\n[line " +
-		e.token.line + "]");
+	if(e !== undefined){
+	    this.output(`${e.message ? e.message : ""}\n[line ${e.token ? e.token.line : ""}]`);
 	}
 	this.hadRuntimeError = true;
     }
