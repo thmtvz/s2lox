@@ -3,14 +3,14 @@ import S2loxFunction from "S2loxFunction";
 import S2loxInstance from "S2loxInstace";
 import S2ltype from "S2ltype";
 
-export defalt class S2loxClass implements S2loxCallable{
+export default class S2loxClass implements S2loxCallable{
     constructor(
 	public readonly name: string,
 	public readonly superClass: S2loxClass,
 	private readonly methods: S2loxFunction[],
     ) {}
 
-    public findMethod(String name): S2loxFunction | null{
+    public findMethod(name: string): S2loxFunction | null{
 	if(methods.has(name)){
 	    return methods.get(name);
 	}

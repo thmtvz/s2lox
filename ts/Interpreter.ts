@@ -32,6 +32,7 @@ import Runner from "Runner";
 import S2loxCallable from "S2loxCallable";
 import TokenType from "TokenType";
 import Return from "Return";
+import Token from "Token";
 
 export default class Interpreter implements ExprVisitor<S2ltype>, StmtVisitor<void>{
     
@@ -55,6 +56,10 @@ export default class Interpreter implements ExprVisitor<S2ltype>, StmtVisitor<vo
 	}
     }
 
+    public visitNoopStmt(stmt: NoopStmt): void{
+	return;
+    }
+
     public visitLiteralExpr(expr: LiteralExpr): S2ltype{
 	return expr.value;
     }
@@ -70,12 +75,12 @@ export default class Interpreter implements ExprVisitor<S2ltype>, StmtVisitor<vo
     public visitUnaryExpr(expr: UnaryExpr): S2ltype{
 	let right = this.evaluate(expr.right);
 
-	switch(expr.operator.type){
+	switch(expr.operator.t){
 	    case TokenType.MINUS:
 		this.checkNumberOperand(expr.operator, right);
-		return -(double)right;
+		return -right;
 	    case TokenType.BANG:
-		return !isTruthy(right);
+		return !this.isTruthy(right);
 	}
 	
 	return null;
@@ -83,7 +88,7 @@ export default class Interpreter implements ExprVisitor<S2ltype>, StmtVisitor<vo
 
     private isTruthy(obj: S2ltype): boolean{
 	if(obj === null) return false;
-	if(obj === false) return b;
+	if(obj === false) return obj;
 	return true;
     }
 
@@ -91,27 +96,27 @@ export default class Interpreter implements ExprVisitor<S2ltype>, StmtVisitor<vo
 	let left = this.evaluate(expr.left);
 	let right = this.evaluate(expr.right);
 
-	switch(expr.operator.type){
-	    case Tokentype.GREATER:
+	switch(expr.operator.t){
+	    case TokenType.GREATER:
 		this.checkNumberOperands(expr.operator, left, right);
 		return left > right;
-	    case Tokentype.GREATER_EQUAL:
+	    case TokenType.GREATER_EQUAL:
 		this.checkNumberOperands(expr.operator, left, right);
 		return left >= right;
-	    case Tokentype.LESS:
+	    case TokenType.LESS:
 		this.checkNumberOperands(expr.operator, left, right);
 		return left < right;
-	    case Tokentype.LESS_EQUAL:
+	    case TokenType.LESS_EQUAL:
 		this.checkNumberOperands(expr.operator, left, right);
 		return left <= right;
-	    case Tokentype.BANG_EQUAL:
+	    case TokenType.BANG_EQUAL:
 		return !this.isEqual(left, right);
-	    case Tokentype.EQUAL_EQUAL:
+	    case TokenType.EQUAL_EQUAL:
 		return this.isEqual(left, right);
-	    case Tokentype.MINUS:
+	    case TokenType.MINUS:
 		this.checkNumberOperands(expr.operator, left, right);
 		return left - right;
-	    case Tokentype.PLUS:
+	    case TokenType.PLUS:
 		if(typeof left === "number" && typeof right === "number"){
 		    return left + right;
 		}
@@ -119,10 +124,10 @@ export default class Interpreter implements ExprVisitor<S2ltype>, StmtVisitor<vo
 		    return left + right;
 		}
 		throw new RuntimeError(expr.operator, "Operands must be either two numbers or two strings");
-	    case Tokentype.SLASH:
+	    case TokenType.SLASH:
 		this.checkNumberOperands(expr.operator, left, right);
 		return left / right;
-	    case Tokentype.STAR:
+	    case TokenType.STAR:
 		this.checkNumberOperands(expr.operator, left, right);
 		return left * right;
 	}
@@ -146,27 +151,28 @@ export default class Interpreter implements ExprVisitor<S2ltype>, StmtVisitor<vo
     }
 
     private stringify(obj: S2ltype):  string{
-	if(object === null) return "nil";
+	if(obj === null) return "nil";
 	return obj.toString();
     }
 
     public visitExpressionStmt(stmt: ExpressionStmt): void{
 	this.evaluate(stmt.expression);
-	return null;
+	return;
     }
 
     public visitPrintStmt(stmt: PrintStmt): void{
 	let value = this.evaluate(stmt.expression);
 	this.runner.output(this.stringify(value));
-	return null;
+	return;
     }
 
     private execute(stmt: Stmt): void{
 	stmt.accept(this);
     }
 
-    public resolve(expr: Expr, depth: number){
-	this.locals.put(expr, depth);
+    public resolve(expr: Expr, depth: number):void{
+	this.locals.set(expr, depth);
+	return;
     }
 
     public visitVarStmt(stmt: VarStmt): void{
@@ -176,10 +182,10 @@ export default class Interpreter implements ExprVisitor<S2ltype>, StmtVisitor<vo
 	}
 
 	this.environment.define(stmt.name.lexeme, value);
-	return null;
+	return;
     }
 
-    public visitVariableExpr(Expr.Variable expr): S2ltype{
+    public visitVariableExpr(expr: VariableExpr): S2ltype{
 	return this.lookUpVariable(expr.name, expr);
     }
     
@@ -204,7 +210,7 @@ export default class Interpreter implements ExprVisitor<S2ltype>, StmtVisitor<vo
 	return value;
     }
 
-    public visitBlockStmt(Stmt.Block stmt): void{
+    public visitBlockStmt(stmt: BlockStmt): void{
 	this.executeBlock(stmt.statements, new Environment(this.environment));
 	return null;
     }
@@ -213,7 +219,7 @@ export default class Interpreter implements ExprVisitor<S2ltype>, StmtVisitor<vo
 	let previous = this.environment;
 	try{
 	    this.environment = environment;
-	    for(Stmt statement : statements){
+	    for(let statement of statements){
 		this.execute(statement);
 	    }
 	} finally {
@@ -230,7 +236,7 @@ export default class Interpreter implements ExprVisitor<S2ltype>, StmtVisitor<vo
 	return null;
     }
 
-    public visitLogicalExpr(Expr.Logical expr): S2ltype{
+    public visitLogicalExpr(expr: LogicalExpr): S2ltype{
 	let left = this.evaluate(expr.left);
 
 	if(expr.operator.type == TokenType.OR){
@@ -355,20 +361,13 @@ export default class Interpreter implements ExprVisitor<S2ltype>, StmtVisitor<vo
     }
 
     public visitImportStmt(stmt: ImportStmt): void{
-	//fix this readfile feature
 	let filename = stmt.name.literal + ".lx";
-	byte[] content = {};
+	
+	let code = this.runner.readfile(filename);
 
-	try{
-	    content = Files.readAllBytes(Paths.get(filename));
-	} catch(NoSuchFileException e){
-	    S2lox.error(stmt.name, "Module not found.");
-	} catch(IOException e){
-	    System.out.println(e);
-	}
-
-	S2lox.run(new String(content, Charset.defaultCharset()), this);
-	return null;
+	this.runner.run(code);
+	
+	return; 
     }
 
 }
