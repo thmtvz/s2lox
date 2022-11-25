@@ -31,6 +31,7 @@ import Environment from "Environment";
 import Runner from "Runner";
 import S2loxCallable from "S2loxCallable";
 import TokenType from "TokenType";
+import Return from "Return";
 
 export default class Interpreter implements ExprVisitor<S2ltype>, StmtVisitor<void>{
     
@@ -254,13 +255,12 @@ export default class Interpreter implements ExprVisitor<S2ltype>, StmtVisitor<vo
 	return value;
     }
 
-    public visitSuperExpr(Expr.Super expr): S2ltype{
+    public visitSuperExpr(expr: SuperExpr): S2ltype{
 	let distance = this.locals.get(expr);
 	let superClass: S2loxClass = this.environment.getAt(distance, "super");
-	//continue at here
-
-	S2loxInstance object = (S2loxInstance)environment.getAt(distance - 1, "this");
-	S2loxFunction method = superClass.findMethod(expr.method.lexeme);
+	
+	let obj: S2loxInstance = this.environment.getAt(distance - 1, "this");
+	let method = superClass.findMethod(expr.method.lexeme);
 	if(method == null){
 	    throw new RuntimeError(expr.method, "Undefined property '" + expr.method.lexeme +
 				   "'.");
@@ -268,5 +268,107 @@ export default class Interpreter implements ExprVisitor<S2ltype>, StmtVisitor<vo
 	return method.bind(object);
     }
 
+    public visitThisExpr(expr: ThisExpr): S2ltype{
+	return this.lookUpVariable(expr.keyword, expr);
+    }
+
+    public visitWhileStmt(stmt: WhileStmt): void{
+	while(this.isTruthy(this.evaluate(stmt.condition))){
+	    this.execute(stmt.body);
+	}
+	return null;
+    }
+
+    public visitCallExpr(expr: CallExpr): S2ltype{
+	let callee = this.evaluate(expr.callee);
+
+	let args: S2ltype[] = [];
+	for(let argument of expr.arguments){
+	    arguments.push(this.evaluate(argument));
+	}
+
+	if(!(callee instanceof S2loxCallable)){
+	    throw new RuntimeError(expr.paren, "Can only call functions and classes.");
+	}
+
+	let fn: S2loxCallable = callee;
+
+	if(args.length != fn.arity()){
+	    throw new RuntimeError(expr.paren, "Expected "+ fn.arity() + " arguments, " +
+				   "but got " + arguments.length + ".");
+	}
+	return fn.call(this, args);
+    }
+
+    public visitFunctionStmt(stmt: FunctionStmt): void{
+	let fn = new S2loxFunction(stmt, environment, false);
+	this.environment.define(stmt.name.lexeme, fn);
+	return null;
+    }
+
+    public visitReturnStmt(stmt: ReturnStmt): void{
+	let value: S2ltype = null;
+	if(stmt.value != null) value = this.evaluate(stmt.value);
+
+	throw new Return(value);
+    }
+
+    public visitClassStmt(stmt: ClassStmt): void{
+	let superClass: S2loxClass | null = null;
+	if(stmt.superClass != null){
+	    superClass = this.evaluate(stmt.superClass);
+	    if(!(superClass instanceof S2loxClass)){
+		throw new RuntimeError(stmt.superClass.name,
+				       "Superclass must be a class.");
+	    }
+	}
+
+	this.environment.define(stmt.name.lexeme, null);
+	
+	if(stmt.superClass != null){
+	    this.environment = new Environment(environment);
+	    this.environment.define("super", superClass);
+	}
+
+	let methods = new Map<string, S2loxFunction>();
+	for(let method of stmt.methods){
+	    let fn = new S2loxFunction(method, environment,
+						       method.name.lexeme.equals("init"));
+	    methods.put(method.name.lexeme, fn);
+	}
+
+	let klass = new S2loxClass(stmt.name.lexeme, superClass, methods);
+	if(stmt.superClass != null){
+	    this.environment = environment.enclosing;
+	}
+	this.environment.assign(stmt.name, klass);
+	return null;
+    }
+    
+    public visitGetExpr(expr: GetExpr): S2ltype{
+	let obj = this.evaluate(expr.object);
+	if(obj instanceof S2loxInstance){
+	    return obj.get(expr.name);
+	}
+
+	throw new RuntimeError(expr.name, "Only instances have properties.");
+    }
+
+    public visitImportStmt(stmt: ImportStmt): void{
+	//fix this readfile feature
+	let filename = stmt.name.literal + ".lx";
+	byte[] content = {};
+
+	try{
+	    content = Files.readAllBytes(Paths.get(filename));
+	} catch(NoSuchFileException e){
+	    S2lox.error(stmt.name, "Module not found.");
+	} catch(IOException e){
+	    System.out.println(e);
+	}
+
+	S2lox.run(new String(content, Charset.defaultCharset()), this);
+	return null;
+    }
 
 }
