@@ -13,9 +13,9 @@ export default class Runner{
     private readonly interpreter:  Interpreter;
 
     constructor(
-	private readonly readline: () => string,
-	private readonly readfile: (s: string) => string,
-	private readonly output: (o: string) => void
+	public readonly readline: () => string,
+	public readonly readfile: (s: string) => string,
+	public readonly output: (o: string) => void
     ){
 	this.interpreter = new Interpreter(this);
     }

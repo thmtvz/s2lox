@@ -33,6 +33,9 @@ import S2loxCallable from "S2loxCallable";
 import TokenType from "TokenType";
 import Return from "Return";
 import Token from "Token";
+import S2loxInstance from "S2loxInstance";
+import S2loxClass from "S2loxClass";
+import S2loxFunction from "S2loxFunction";
 
 export default class Interpreter implements ExprVisitor<S2ltype>, StmtVisitor<void>{
     
@@ -191,7 +194,7 @@ export default class Interpreter implements ExprVisitor<S2ltype>, StmtVisitor<vo
     
     private lookUpVariable(name: Token, expr: Expr): S2ltype{
 	let distance = this.locals.get(expr);
-	if(distance !== null){
+	if(distance !== undefined){
 	    return this.environment.getAt(distance, name.lexeme);
 	} else {
 	    return this.globals.get(name);
@@ -201,7 +204,7 @@ export default class Interpreter implements ExprVisitor<S2ltype>, StmtVisitor<vo
     public visitAssignExpr(expr: AssignExpr): S2ltype{
 	let value = this.evaluate(expr.value);
 	let distance = this.locals.get(expr);
-	if(distance !== null){
+	if(distance !== undefined){
 	    this.environment.assignAt(distance, expr.name, value);
 	} else {
 	    this.globals.assign(expr.name, value);
@@ -212,7 +215,7 @@ export default class Interpreter implements ExprVisitor<S2ltype>, StmtVisitor<vo
 
     public visitBlockStmt(stmt: BlockStmt): void{
 	this.executeBlock(stmt.statements, new Environment(this.environment));
-	return null;
+	return;
     }
 
     public executeBlock(statements: Stmt[], environment: Environment): void{
@@ -233,13 +236,13 @@ export default class Interpreter implements ExprVisitor<S2ltype>, StmtVisitor<vo
 	} else if(stmt.elseBranch != null){
 	    this.execute(stmt.elseBranch);
 	}
-	return null;
+	return;
     }
 
     public visitLogicalExpr(expr: LogicalExpr): S2ltype{
 	let left = this.evaluate(expr.left);
 
-	if(expr.operator.type == TokenType.OR){
+	if(expr.operator.t == TokenType.OR){
 	    if(this.isTruthy(left)) return left;
 	} else {
 	    if(!this.isTruthy(left)) return left;
@@ -255,14 +258,14 @@ export default class Interpreter implements ExprVisitor<S2ltype>, StmtVisitor<vo
 	    throw new RuntimeError(expr.name, "Only instances have fields");
 	}
 
-	let value = evaluate(expr.value);
-	if(obj instanceof "S2loxInstance") //🧐🧐
+	let value = this.evaluate(expr.value);
+	if(obj instanceof S2loxInstance) //🧐🧐
 	    obj.set(expr.name, value);
 	return value;
     }
 
     public visitSuperExpr(expr: SuperExpr): S2ltype{
-	let distance = this.locals.get(expr);
+	let distance = this.locals.get(expr) || 0;// carinha
 	let superClass: S2loxClass = this.environment.getAt(distance, "super");
 	
 	let obj: S2loxInstance = this.environment.getAt(distance - 1, "this");
@@ -271,7 +274,7 @@ export default class Interpreter implements ExprVisitor<S2ltype>, StmtVisitor<vo
 	    throw new RuntimeError(expr.method, "Undefined property '" + expr.method.lexeme +
 				   "'.");
 	}
-	return method.bind(object);
+	return method.bind(obj);
     }
 
     public visitThisExpr(expr: ThisExpr): S2ltype{
@@ -282,18 +285,18 @@ export default class Interpreter implements ExprVisitor<S2ltype>, StmtVisitor<vo
 	while(this.isTruthy(this.evaluate(stmt.condition))){
 	    this.execute(stmt.body);
 	}
-	return null;
+	return;
     }
 
     public visitCallExpr(expr: CallExpr): S2ltype{
 	let callee = this.evaluate(expr.callee);
 
 	let args: S2ltype[] = [];
-	for(let argument of expr.arguments){
-	    arguments.push(this.evaluate(argument));
+	for(let argument of expr.args){
+	    args.push(this.evaluate(argument));
 	}
 
-	if(!(callee instanceof S2loxCallable)){
+	if(!((callee instanceof S2loxClass) || (callee instanceof S2loxFunction))){
 	    throw new RuntimeError(expr.paren, "Can only call functions and classes.");
 	}
 
@@ -307,9 +310,9 @@ export default class Interpreter implements ExprVisitor<S2ltype>, StmtVisitor<vo
     }
 
     public visitFunctionStmt(stmt: FunctionStmt): void{
-	let fn = new S2loxFunction(stmt, environment, false);
+	let fn = new S2loxFunction(false, this.environment, stmt);
 	this.environment.define(stmt.name.lexeme, fn);
-	return null;
+	return;
     }
 
     public visitReturnStmt(stmt: ReturnStmt): void{
@@ -332,27 +335,28 @@ export default class Interpreter implements ExprVisitor<S2ltype>, StmtVisitor<vo
 	this.environment.define(stmt.name.lexeme, null);
 	
 	if(stmt.superClass != null){
-	    this.environment = new Environment(environment);
+	    this.environment = new Environment(this.environment);
 	    this.environment.define("super", superClass);
 	}
 
 	let methods = new Map<string, S2loxFunction>();
 	for(let method of stmt.methods){
-	    let fn = new S2loxFunction(method, environment,
-						       method.name.lexeme.equals("init"));
-	    methods.put(method.name.lexeme, fn);
+	    let fn = new S2loxFunction(method.name.lexeme === "init",
+				       this.environment, method);
+	    methods.set(method.name.lexeme, fn);
 	}
 
 	let klass = new S2loxClass(stmt.name.lexeme, superClass, methods);
-	if(stmt.superClass != null){
-	    this.environment = environment.enclosing;
+	if(stmt.superClass !== null){
+	    if(this.environment.enclosing !== null) //🧐🧐
+		this.environment = this.environment.enclosing;
 	}
 	this.environment.assign(stmt.name, klass);
-	return null;
+	return;
     }
     
     public visitGetExpr(expr: GetExpr): S2ltype{
-	let obj = this.evaluate(expr.object);
+	let obj = this.evaluate(expr.obj);
 	if(obj instanceof S2loxInstance){
 	    return obj.get(expr.name);
 	}
