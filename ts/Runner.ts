@@ -43,7 +43,7 @@ export default class Runner{
     public run(source: string): void{
 	const scanner = new Scanner(this, source);
 	const tokens = scanner.scanTokens();
-
+	
 	const parser = new Parser(this, tokens);
 	const statements = parser.parse();
 

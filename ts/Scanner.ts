@@ -5,24 +5,24 @@ import Runner from "./Runner.js";
 export default class Scanner {
     private readonly tokens: Token[] = [];
     private static readonly keywords: {[k: string]: TokenType} = {
-	'"and"'		:	 TokenType.AND,
-	'"class"'	:	 TokenType.CLASS,
-	'"else"'	:	 TokenType.ELSE,
-	'"false"'	:	 TokenType.FALSE,
-	'"for"'		:	 TokenType.FOR,
-	'"fun"'		:	 TokenType.FUN,
-	'"if"'		:	 TokenType.IF,
-	'"nil"'		:	 TokenType.NIL,
-	'"or"'		:	 TokenType.OR,
-	'"print"'	:	 TokenType.PRINT,
-	'"return"'	:	 TokenType.RETURN,
-	'"super"'	:	 TokenType.SUPER,
-	'"this"'	:	 TokenType.THIS,
-	'"true"'	:	 TokenType.TRUE,
-	'"var"'		:	 TokenType.VAR,
-	'"while"'	:	 TokenType.WHILE,
-	'"import"'	:	 TokenType.IMPORT,
-	'"noop"'        :        TokenType.NOOP,
+	"and"		:	 TokenType.AND,
+	"class"		:	 TokenType.CLASS,
+	"else"		:	 TokenType.ELSE,
+	"false"		:	 TokenType.FALSE,
+	"for"		:	 TokenType.FOR,
+	"fun"		:	 TokenType.FUN,
+	"if"		:	 TokenType.IF,
+	"nil"		:	 TokenType.NIL,
+	"or"		:	 TokenType.OR,
+	"print"		:	 TokenType.PRINT,
+	"return"	:	 TokenType.RETURN,
+	"super"		:	 TokenType.SUPER,
+	"this"		:	 TokenType.THIS,
+	"true"		:	 TokenType.TRUE,
+	"var"		:	 TokenType.VAR,
+	"while"		:	 TokenType.WHILE,
+	"import"	:	 TokenType.IMPORT,
+	"noop"		:        TokenType.NOOP,
     };
     private start = 0;
     private current = 0;
@@ -34,7 +34,7 @@ export default class Scanner {
     ) {}
 
     scanTokens(): Token[]{
-	while(1){
+	while(!this.isAtEnd()){
 	    this.start = this.current;
 	    this.scanToken();
 	}
@@ -164,7 +164,7 @@ export default class Scanner {
 	const text = this.source.slice(this.start, this.current);
 	let t: TokenType;
 	t = Scanner.keywords[text];
-	if(t == undefined) t = TokenType.IDENTIFIER;
+	if(t === undefined) t = TokenType.IDENTIFIER;
 	this.addToken(t);
     }
 

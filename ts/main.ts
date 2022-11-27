@@ -4,7 +4,8 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 function readfile(filename: string): string{
-    return readFileSync(resolve(filename)).toString();
+    let contents = readFileSync(resolve(filename));
+    return contents.toString();
 }
 
 async function rl(prompt: string): Promise<string>{
@@ -28,8 +29,8 @@ function output(o: string): void{
     if(args.indexOf("--help") >= 0){
 	console.log("tsS2lox: S2lox [script] [--help]");
 	process.exit(64);
-    } else if(args.length === 1){
-	runner.runScript(args[0]);
+    } else if(args.length === 3){
+	runner.runScript(args[2]);
     } else {
 	runner.runPrompt();
     }
