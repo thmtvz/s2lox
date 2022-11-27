@@ -25,6 +25,7 @@ function output(o: string): void{
 	rl,
 	readfile,
 	output,
+	Date.now,
     );
     if(args.indexOf("--help") >= 0){
 	console.log("tsS2lox: S2lox [script] [--help]");

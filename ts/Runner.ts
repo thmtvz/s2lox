@@ -15,7 +15,8 @@ export default class Runner{
     constructor(
 	public readonly readline: (p: string) => Promise<string>,
 	public readonly readfile: (s: string) => string,
-	public readonly output: (o: string) => void
+	public readonly output: (o: string) => void,
+	public readonly clock: () => number,
     ) {}
 
     public async runPrompt(): Promise<void>{

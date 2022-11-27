@@ -46,7 +46,77 @@ export default class Interpreter implements ExprVisitor<S2ltype>, StmtVisitor<vo
     constructor(
 	private readonly runner: Runner
     ) {
+	this.globals.define("toString", new class implements S2loxCallable{
+	    public arity() { return 1 }
+
+	    public call(interpreter: Interpreter, args: S2ltype[]): S2ltype{
+		return `${args[0]}`;
+	    }
+	    
+	    public toString() { return "<native fun>"; }
+	});
+
+	this.globals.define("clock", new class implements S2loxCallable{
+	    constructor(
+		private readonly clock: () => number,
+	    ){}
+
+	    public arity() { return 0; }
+	    
+	    public call(interpreter: Interpreter, args: S2ltype[]): S2ltype{
+		this.clock();
+		return null;
+	    }
+
+	    public toString() { return "<native fun>"; }
+ 
+	}(this.runner.clock));
 	
+	this.globals.define("number", new class implements S2loxCallable{
+	    public arity() { return 1; }
+
+	    public call(interpreter: Interpreter, args: S2ltype[]): S2ltype{
+		let arg = args[0];
+		if(arg === true || arg === false){
+		    if(arg) return 1;
+		    return 0;
+		}
+		if(arg === null) return 0;
+		return parseFloat(arg.toString());
+	    }
+
+	    public toString() { return "<native fun>"; }
+	});
+
+	this.globals.define("input", new class implements S2loxCallable{
+	    constructor(
+		private readonly input: (p: string) => Promise<string>,
+	    ){}
+
+	    public arity() { return 0; }
+
+	    public call(interpreter: Interpreter, args: S2ltype[]): S2ltype{
+		//return this.input();
+		//TODO implement this
+		return null;
+	    }
+	    
+	    public toString() { return "<native fun>"; }
+	}(this.runner.readline));
+
+	this.globals.define("random", new class implements S2loxCallable{
+	    public arity() { return 2; }
+
+	    public call(interpreter: Interpreter, args: S2ltype[]): S2ltype{
+		let maxValue = args[1] ? parseFloat(args[1].toString()) : 0;
+		let minValue = args[0] ? parseFloat(args[0].toString()) : 0;
+		return Math.ceil(Math.random() * (maxValue - minValue)) + minValue;
+	    }
+	    
+	    public toString() { return "<native fun>"; }
+	}());
+
+	this.globals.define("object", new S2loxClass("object", null, new Map<string, S2loxFunction>()));
     }
 
     public interpret(statements: Stmt[]): void{
