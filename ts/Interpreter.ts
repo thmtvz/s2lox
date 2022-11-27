@@ -81,6 +81,7 @@ export default class Interpreter implements ExprVisitor<S2ltype>, StmtVisitor<vo
 	switch(expr.operator.t){
 	    case TokenType.MINUS:
 		this.checkNumberOperand(expr.operator, right);
+		if(right === null) return null; //🧐🧐
 		return -right;
 	    case TokenType.BANG:
 		return !this.isTruthy(right);
@@ -101,25 +102,34 @@ export default class Interpreter implements ExprVisitor<S2ltype>, StmtVisitor<vo
 
 	switch(expr.operator.t){
 	    case TokenType.GREATER:
+		if(left === null || right === null) return null; //🧐🧐
 		this.checkNumberOperands(expr.operator, left, right);
 		return left > right;
 	    case TokenType.GREATER_EQUAL:
+		if(left === null || right === null) return null; //🧐🧐
 		this.checkNumberOperands(expr.operator, left, right);
 		return left >= right;
 	    case TokenType.LESS:
+		if(left === null || right === null) return null; //🧐🧐
 		this.checkNumberOperands(expr.operator, left, right);
 		return left < right;
 	    case TokenType.LESS_EQUAL:
+		if(left === null || right === null) return null; //🧐🧐
 		this.checkNumberOperands(expr.operator, left, right);
 		return left <= right;
 	    case TokenType.BANG_EQUAL:
+		if(left === null || right === null) return null; //🧐🧐
 		return !this.isEqual(left, right);
 	    case TokenType.EQUAL_EQUAL:
+		if(left === null || right === null) return null; //🧐🧐
 		return this.isEqual(left, right);
 	    case TokenType.MINUS:
+		if(left === null || right === null) return null; //🧐🧐
 		this.checkNumberOperands(expr.operator, left, right);
-		return left - right;
+		if(typeof left === "number" && typeof right === "number") return left - right;
+		return null; //🧐🧐
 	    case TokenType.PLUS:
+		if(left === null || right === null) return null; //🧐🧐
 		if(typeof left === "number" && typeof right === "number"){
 		    return left + right;
 		}
@@ -128,13 +138,16 @@ export default class Interpreter implements ExprVisitor<S2ltype>, StmtVisitor<vo
 		}
 		throw new RuntimeError(expr.operator, "Operands must be either two numbers or two strings");
 	    case TokenType.SLASH:
+		if(left === null || right === null) return null; //🧐🧐
 		this.checkNumberOperands(expr.operator, left, right);
-		return left / right;
+		if(typeof left === "number" && typeof right === "number") return left / right; //🧐🧐
+		return null;
 	    case TokenType.STAR:
+		if(left === null || right === null) return null; //🧐🧐
 		this.checkNumberOperands(expr.operator, left, right);
-		return left * right;
+		if(typeof left === "number" && typeof right === "number") return left * right;
+		return null;
 	}
-	
 	return null;
     }
 
@@ -265,16 +278,22 @@ export default class Interpreter implements ExprVisitor<S2ltype>, StmtVisitor<vo
     }
 
     public visitSuperExpr(expr: SuperExpr): S2ltype{
-	let distance = this.locals.get(expr) || 0;// carinha
-	let superClass: S2loxClass = this.environment.getAt(distance, "super");
+	let distance = this.locals.get(expr) || 0; //🧐🧐
+	let superClass: S2ltype | S2loxClass = this.environment.getAt(distance, "super");
 	
-	let obj: S2loxInstance = this.environment.getAt(distance - 1, "this");
-	let method = superClass.findMethod(expr.method.lexeme);
+	let obj: S2ltype | S2loxInstance = this.environment.getAt(distance - 1, "this");
+	let method: S2loxFunction | null = null;
+
+	if(superClass !== null &&
+	    superClass instanceof S2loxClass) method = superClass.findMethod(expr.method.lexeme); //🧐🧐
+
 	if(method == null){
 	    throw new RuntimeError(expr.method, "Undefined property '" + expr.method.lexeme +
 				   "'.");
 	}
-	return method.bind(obj);
+	
+	if(obj instanceof S2loxInstance) return method.bind(obj); //🧐🧐
+	return null; //🧐🧐
     }
 
     public visitThisExpr(expr: ThisExpr): S2ltype{
@@ -323,8 +342,8 @@ export default class Interpreter implements ExprVisitor<S2ltype>, StmtVisitor<vo
     }
 
     public visitClassStmt(stmt: ClassStmt): void{
-	let superClass: S2loxClass | null = null;
-	if(stmt.superClass != null){
+	let superClass: S2ltype = null;
+	if(stmt.superClass !== null){
 	    superClass = this.evaluate(stmt.superClass);
 	    if(!(superClass instanceof S2loxClass)){
 		throw new RuntimeError(stmt.superClass.name,

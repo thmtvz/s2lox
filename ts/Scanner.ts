@@ -1,6 +1,6 @@
-import Token from "./Token";
-import TokenType from "./TokenType";
-import Runner from "./Runner";
+import Token from "Token";
+import TokenType from "TokenType";
+import Runner from "Runner";
 
 export default class Scanner {
     private readonly tokens: Token[] = [];

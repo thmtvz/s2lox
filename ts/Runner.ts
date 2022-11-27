@@ -10,22 +10,18 @@ export default class Runner{
 
     private hadError: boolean = false;
     private hadRuntimeError: boolean = false;
-    private readonly interpreter:  Interpreter;
+    private readonly interpreter:  Interpreter = new Interpreter(this);
 
     constructor(
-	public readonly readline: () => string,
+	public readonly readline: (p: string) => Promise<string>,
 	public readonly readfile: (s: string) => string,
 	public readonly output: (o: string) => void
-    ){
-	this.interpreter = new Interpreter(this);
-    }
+    ) {}
 
-    public runPrompt(): void{
+    public async runPrompt(): Promise<void>{
 	let lineNo = 1;
 	for(;;){
-	    this.output("[" + lineNo.toString() + "]" +
-		" s2lox -> ");
-	    const line = this.readline();
+	    const line = await this.readline(`[${lineNo}] s2lox -> `);
 	    if(line === ".exit" || line === ""){
 		this.output("Bye");
 		process.exit(0);

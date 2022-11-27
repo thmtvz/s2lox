@@ -18,7 +18,9 @@ export default class S2loxInstance{
 
     public get(name: Token): S2ltype{
 	if(this.fields.has(name.lexeme)){
-	    return this.fields.get(name.lexeme);
+	    let r = this.fields.get(name.lexeme);
+	    if(r === undefined) return null;
+	    return r;
 	}
 
 	let method = this.klass.findMethod(name.lexeme);
