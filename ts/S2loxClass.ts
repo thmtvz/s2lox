@@ -1,8 +1,8 @@
-import Interpreter from "Interpreter";
-import S2loxCallable from "S2loxCallable";
-import S2loxFunction from "S2loxFunction";
-import S2loxInstance from "S2loxInstance";
-import S2ltype from "S2ltype";
+import Interpreter from "./Interpreter.js";
+import S2loxCallable from "./S2loxCallable.js";
+import S2loxFunction from "./S2loxFunction.js";
+import S2loxInstance from "./S2loxInstance.js";
+import S2ltype from "./S2ltype.js";
 
 export default class S2loxClass implements S2loxCallable{
     constructor(

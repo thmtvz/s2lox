@@ -1,10 +1,10 @@
-import Scanner from "Scanner";
-import Token from "Token";
-import TokenType from "TokenType";
-import Interpreter from "Interpreter";
-import RuntimeError from "RuntimeError";
-import Parser from "Parser";
-import Resolver from "Resolver";
+import Scanner from "./Scanner.js";
+import Token from "./Token.js";
+import TokenType from "./TokenType.js";
+import Interpreter from "./Interpreter.js";
+import RuntimeError from "./RuntimeError.js";
+import Parser from "./Parser.js";
+import Resolver from "./Resolver.js";
 
 export default class Runner{
 

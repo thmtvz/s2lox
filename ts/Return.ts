@@ -1,4 +1,4 @@
-import S2ltype from "S2ltype";
+import S2ltype from "./S2ltype.js";
 
 export default class Return{
     constructor(

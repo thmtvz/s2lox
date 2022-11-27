@@ -1,10 +1,10 @@
-import { FunctionStmt } from "Stmt";
-import S2ltype from "S2ltype";
-import Environment from "Environment";
-import S2loxInstance from "S2loxInstance";
-import S2loxCallable from "S2loxCallable";
-import Interpreter from "Interpreter";
-import Return from "Return";
+import { FunctionStmt } from "./Stmt.js";
+import S2ltype from "./S2ltype.js";
+import Environment from "./Environment.js";
+import S2loxInstance from "./S2loxInstance.js";
+import S2loxCallable from "./S2loxCallable.js";
+import Interpreter from "./Interpreter.js";
+import Return from "./Return.js";
 
 export default class S2loxFunction implements S2loxCallable{
 

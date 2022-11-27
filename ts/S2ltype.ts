@@ -1,6 +1,6 @@
-import S2loxCallable from "S2loxCallable";
-import S2loxInstance from "S2loxInstance";
-import S2loxClass from "S2loxClass";
+import S2loxCallable from "./S2loxCallable.js";
+import S2loxInstance from "./S2loxInstance.js";
+import S2loxClass from "./S2loxClass.js";
 
 type S2ltype = number | string  | boolean | S2loxCallable |
     S2loxInstance | null;

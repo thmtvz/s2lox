@@ -1,6 +1,6 @@
-import RuntimeError from "RuntimeError";
-import Token from "Token";
-import S2ltype from "S2ltype";
+import RuntimeError from "./RuntimeError.js";
+import Token from "./Token.js";
+import S2ltype from "./S2ltype.js";
 
 export default class Environment{
     

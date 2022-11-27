@@ -1,8 +1,8 @@
-import RuntimeError from "RuntimeError";
-import S2loxFunction from "S2loxFunction";
-import S2loxClass from "S2loxClass";
-import S2ltype from "S2ltype";
-import Token from "Token";
+import RuntimeError from "./RuntimeError.js";
+import S2loxFunction from "./S2loxFunction.js";
+import S2loxClass from "./S2loxClass.js";
+import S2ltype from "./S2ltype.js";
+import Token from "./Token.js";
 
 export default class S2loxInstance{
 

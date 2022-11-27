@@ -1,5 +1,5 @@
-import S2ltype from "./S2ltype";
-import Interpreter from "./Interpreter";
+import S2ltype from "./S2ltype.js";
+import Interpreter from "./Interpreter.js";
 
 export default interface S2loxCallable {
     arity(): number;

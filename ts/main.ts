@@ -1,4 +1,4 @@
-import Runner from "Runner";
+import Runner from "./Runner.js";
 import readline from "node:readline/promises";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
@@ -25,7 +25,7 @@ function output(o: string): void{
 	readfile,
 	output,
     );
-    if(args.length > 1 || args.indexOf("--help") >= 0){
+    if(args.indexOf("--help") >= 0){
 	console.log("tsS2lox: S2lox [script] [--help]");
 	process.exit(64);
     } else if(args.length === 1){
