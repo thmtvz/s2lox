@@ -394,7 +394,7 @@ export default class Interpreter implements ExprVisitor<S2ltype>, StmtVisitor<vo
 	}
 	return fn.call(this, args);
 
-	function isCallable(callee: S2ltype): callee is S2loxCallable{
+	function isCallable(callee: S2ltype): callee is S2loxCallable{ //🧐🧐
 	    if(callee === null || typeof callee !== "object") return false;
 	    return "call" in callee &&
 		"arity" in callee;

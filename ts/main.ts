@@ -35,7 +35,7 @@ function output(o: string): void{
 	Date.now,
     );
     if(args.indexOf("--help") >= 0){
-	console.log("tsS2lox: S2lox [script] [--help]");
+	console.log("sS2lox: S2lox [script] [--help]");
 	process.exit(64);
     } else if(args.length === 3){
 	runner.runScript(args[2]);
