@@ -383,7 +383,7 @@ export default class Interpreter implements ExprVisitor<S2ltype>, StmtVisitor<vo
 	    args.push(this.evaluate(argument));
 	}
 
-	if(!((callee instanceof S2loxClass) || (callee instanceof S2loxFunction))){
+	if(!isCallable(callee)){
 	    throw new RuntimeError(expr.paren, "Can only call functions and classes.");
 	}
 
@@ -394,6 +394,12 @@ export default class Interpreter implements ExprVisitor<S2ltype>, StmtVisitor<vo
 				   "but got " + arguments.length + ".");
 	}
 	return fn.call(this, args);
+
+	function isCallable(callee: S2ltype): callee is S2loxCallable{
+	    if(callee === null || typeof callee !== "object") return false;
+	    return "call" in callee &&
+		"arity" in callee;
+	}
     }
 
     public visitFunctionStmt(stmt: FunctionStmt): void{
