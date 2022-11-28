@@ -15,9 +15,6 @@ LINT	   := -Xlint:unchecked
 JARNAME	   := $(MAIN)
 ASTSOURCE  := $(DIRSTRUCT)Stmt.java $(DIRSTRUCT)Expr.java 
 
-$(ASTSOURCE):
-	@ node tool/genAst.js $(DIRSTRUCT)
-
 $(TARGETDIR)$(SCRIPTNAME): $(TARGETDIR)$(JARNAME)
 ifeq ($(strip $(DEBUG)),)
 	@ echo "Building script"
@@ -40,5 +37,8 @@ ifeq ($(strip $(DEBUG)),)
 else
 	@ $(JC) $(DEBUGFLAG) $(LINT) $(OPTS) $(MAINSOURCE)
 endif
+
+$(ASTSOURCE):
+	@ node tool/genAst.js $(DIRSTRUCT)
 
 .PHONY: 
