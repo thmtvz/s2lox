@@ -13,16 +13,16 @@ export default class Runner{
     private readonly interpreter:  Interpreter = new Interpreter(this);
 
     constructor(
-	public readonly readline: (p: string) => Promise<string>,
+	public readonly readline: (p?: string) => string,
 	public readonly readfile: (s: string) => string,
 	public readonly output: (o: string) => void,
 	public readonly clock: () => number,
     ) {}
 
-    public async runPrompt(): Promise<void>{
+    public runPrompt(): void{
 	let lineNo = 1;
 	for(;;){
-	    const line = await this.readline(`[${lineNo}] s2lox -> `);
+	    const line = this.readline(`[${lineNo}] s2lox -> `);
 	    if(line === ".exit" || line === ""){
 		this.output("Bye");
 		process.exit(0);

@@ -1,6 +1,7 @@
 import Runner from "./Runner.js";
-import readline from "node:readline/promises";
 import { readFileSync } from "node:fs";
+import { readSync } from "node:fs";
+import { writeSync } from "node:fs";
 import { resolve } from "node:path";
 
 function readfile(filename: string): string{
@@ -8,11 +9,17 @@ function readfile(filename: string): string{
     return contents.toString();
 }
 
-async function rl(prompt: string): Promise<string>{
-    const rl = readline.createInterface({input: process.stdin, output: process.stdout});
-    const a = await rl.question(prompt);
-    rl.close();
-    return a.toString();
+function readline(prompt?: string): string{
+    if(prompt){
+	writeSync(1, prompt);
+    }
+    let buf = Buffer.alloc(1024);
+    let p = 0;
+    while(buf.slice(0, p).toString().indexOf("\n") === -1){
+	readSync(0, buf, p, 1, -1);
+	++p;
+    }
+    return buf.slice(0, p).toString().replace("\n", "");
 }
 
 function output(o: string): void{
@@ -22,7 +29,7 @@ function output(o: string): void{
 
 (function main(args){
     const runner = new Runner(
-	rl,
+	readline,
 	readfile,
 	output,
 	Date.now,

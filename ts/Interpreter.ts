@@ -90,15 +90,13 @@ export default class Interpreter implements ExprVisitor<S2ltype>, StmtVisitor<vo
 
 	this.globals.define("input", new class implements S2loxCallable{
 	    constructor(
-		private readonly input: (p: string) => Promise<string>,
+		private readonly input: (p?: string) => string,
 	    ){}
 
 	    public arity() { return 0; }
 
 	    public call(interpreter: Interpreter, args: S2ltype[]): S2ltype{
-		//return this.input();
-		//TODO implement this
-		return null;
+		return this.input();
 	    }
 	    
 	    public toString() { return "<native fun>"; }
