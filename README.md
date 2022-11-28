@@ -9,7 +9,7 @@ Currently on development.
 
 ```bash
 git clone https://github.com/thmtvz/s2lox && cd s2lox
-make java
+make all
 ./build/jS2lox resources/examples/hello.lx #😄
 ./build/tsS2lox resources/examples/hello.lx 
 ```
