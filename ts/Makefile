@@ -1,6 +1,7 @@
 ASTFILES := Stmt.ts Expr.ts
 
 $(ASTFILES):
+	@ npm install
 	@ node ./tool/genAst.js .
 
 all: $(ASTFILES)
