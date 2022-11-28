@@ -4,7 +4,7 @@ $(ASTFILES):
 	@ node ./tool/genAst.js .
 
 all: $(ASTFILES)
-	@ tsc -outDir $(BUILDDIR)jsBuild
+	@ tsc -outDir $(BUILDDIR)jsBuild --pretty false
 	@ node ./tool/genRun.js $(BUILDDIR);
 	@ chmod +x $(BUILDDIR)tsS2lox
 
