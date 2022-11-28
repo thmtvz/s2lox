@@ -1,6 +1,7 @@
 import Token from "./Token.js";
 import TokenType from "./TokenType.js";
 import Runner from "./Runner.js";
+import S2ltype from "./S2ltype.js";
 
 export default class Scanner {
     private readonly tokens: Token[] = [];
@@ -107,9 +108,9 @@ export default class Scanner {
 	return true;
     }
 
-    private addToken(t: TokenType, literal?: Object): void{
+    private addToken(t: TokenType, literal?: S2ltype): void{
 	const text = this.source.slice(this.start, this.current);
-	if(!literal){
+	if(literal === undefined){
 	    this.tokens.push(new Token(t, text, null, this.line));
 	    return;
 	}
@@ -138,6 +139,10 @@ export default class Scanner {
 	const value = this.source.slice(this.start + 1,
 					this.current - 1);
 	this.addToken(TokenType.STRING, value);
+
+
+
+
     }
 
     private isDigit(c: string): boolean{
