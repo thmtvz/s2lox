@@ -20,10 +20,5 @@ var t1 = clock();
 var result = fib(i);
 var t2 = clock();
 
-<<<<<<< ours
-print "fib(" + toString(input) + ") took " + toString(t2 - t1) +
-			       " time to complete and returned " + toString(result);
-=======
-print "fib(" + toString(result) + ") took " + toString(t2 - t1) +
-  " time to complete and returned " + toString(result);
->>>>>>> theirs
+print "fib(" + toString(i) + ") took " + toString(t2 - t1) +
+			       " miliseconds to complete and returned " + toString(result);
