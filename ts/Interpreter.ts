@@ -169,34 +169,40 @@ export default class Interpreter implements ExprVisitor<S2ltype>, StmtVisitor<vo
 
 	switch(expr.operator.t){
 	    case TokenType.GREATER:
-		if(left === null || right === null) return null; //🧐🧐
-		this.checkNumberOperands(expr.operator, left, right);
+		if(!(typeof left === "number" && typeof right === "number")){
+		    throw new RuntimeError(expr.operator, "Operands must be numbers");
+		} //typechecker can't see so far then 
+		//this.checkNumberOperands(expr.operator, left, right); 
 		return left > right;
 	    case TokenType.GREATER_EQUAL:
-		if(left === null || right === null) return null; //🧐🧐
-		this.checkNumberOperands(expr.operator, left, right);
+		if(!(typeof left === "number" && typeof right === "number")){
+		    throw new RuntimeError(expr.operator, "Operands must be numbers");
+		}
+		//this.checkNumberOperands(expr.operator, left, right);
 		return left >= right;
 	    case TokenType.LESS:
-		if(left === null || right === null) return null; //🧐🧐
-		this.checkNumberOperands(expr.operator, left, right);
+		if(!(typeof left === "number" && typeof right === "number")){
+		    throw new RuntimeError(expr.operator, "Operands must be numbers");
+		}
+		//this.checkNumberOperands(expr.operator, left, right);
 		return left < right;
 	    case TokenType.LESS_EQUAL:
-		if(left === null || right === null) return null; //🧐🧐
-		this.checkNumberOperands(expr.operator, left, right);
+		if(!(typeof left === "number" && typeof right === "number")){
+		    throw new RuntimeError(expr.operator, "Operands must be numbers");
+		}
+		//this.checkNumberOperands(expr.operator, left, right);
 		return left <= right;
 	    case TokenType.BANG_EQUAL:
-		if(left === null || right === null) return null; //🧐🧐
-		return !this.isEqual(left, right);
+		return !(right === left);
 	    case TokenType.EQUAL_EQUAL:
-		if(left === null || right === null) return null; //🧐🧐
-		return this.isEqual(left, right);
+		return right === left;
 	    case TokenType.MINUS:
-		if(left === null || right === null) return null; //🧐🧐
-		this.checkNumberOperands(expr.operator, left, right);
-		if(typeof left === "number" && typeof right === "number") return left - right;
-		return null; //🧐🧐
+		if(!(typeof left === "number" && typeof right === "number")){
+		    throw new RuntimeError(expr.operator, "Operands must be numbers");
+		}
+		//this.checkNumberOperands(expr.operator, left, right);
+		return left - right;
 	    case TokenType.PLUS:
-		if(left === null || right === null) return null; //🧐🧐
 		if(typeof left === "number" && typeof right === "number"){
 		    return left + right;
 		}
@@ -205,21 +211,22 @@ export default class Interpreter implements ExprVisitor<S2ltype>, StmtVisitor<vo
 		}
 		throw new RuntimeError(expr.operator, "Operands must be either two numbers or two strings");
 	    case TokenType.SLASH:
-		if(left === null || right === null) return null; //🧐🧐
-		this.checkNumberOperands(expr.operator, left, right);
-		if(typeof left === "number" && typeof right === "number") return left / right; //🧐🧐
-		return null;
+		if(!(typeof left === "number" && typeof right === "number")){
+		    throw new RuntimeError(expr.operator, "Operands must be numbers");
+		}
+		//this.checkNumberOperands(expr.operator, left, right);
+		return left / right;
 	    case TokenType.STAR:
-		if(left === null || right === null) return null; //🧐🧐
-		this.checkNumberOperands(expr.operator, left, right);
-		if(typeof left === "number" && typeof right === "number") return left * right;
-		return null;
+		if(!(typeof left === "number" && typeof right === "number")){
+		    throw new RuntimeError(expr.operator, "Operands must be numbers");
+		}
+		//this.checkNumberOperands(expr.operator, left, right);
+		return left * right;
 	}
 	return null;
     }
 
     private isEqual(o1: S2ltype, o2: S2ltype): S2ltype{
-	//check this later
 	return o1 == o2;
     }
 
@@ -460,7 +467,7 @@ export default class Interpreter implements ExprVisitor<S2ltype>, StmtVisitor<vo
 	let filename = stmt.name.literal + ".lx";
 	
 	let code = this.runner.readfile(filename);
-
+	
 	this.runner.run(code);
 	
 	return; 
