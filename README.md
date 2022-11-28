@@ -7,6 +7,13 @@ Currently on development.
 
 ## Getting it
 
+```bash
+git clone https://github.com/thmtvz/s2lox && cd s2lox
+make java
+./build/jS2lox resources/examples/hello.lx #😄
+./build/tsS2lox resources/examples/hello.lx 
+```
+
 ### Depends on:
 
 - jar
@@ -17,12 +24,6 @@ Currently on development.
 - nodejs
 - coreutils
 
-```bash
-git clone https://github.com/thmtvz/s2lox && cd s2lox
-make java
-./build/jS2lox resources/examples/hello.lx #😄
-./build/tsS2lox resources/examples/hello.lx 
-```
 
 ## Examples
 
