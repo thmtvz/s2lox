@@ -61,6 +61,6 @@ function bufferedWriteToFile(filepath){
 
     writeln("#!/usr/bin/sh");
     writeln();
-    writeln(`cd ${path.resolve(outdir + "jsBuild")} && node main.js`);
+    writeln(`node ${outdir}jsBuild/main.js $@`);
     
 })(process.argv);
