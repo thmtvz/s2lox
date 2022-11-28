@@ -37,11 +37,10 @@ public class S2lox{
 	    System.out.print("]");
 	    System.out.print(" s2lox -> ");
 	    String line = reader.readLine();
-	    if(line.equals(".exit")){
+	    if(line.equals(".exit") || line == null){
 		System.out.println("Bye");
 		System.exit(0);
 	    }
-	    if(line == null) System.exit(0);
 	    run(line);
 	    hadError = false;
 	    lineNo++;
