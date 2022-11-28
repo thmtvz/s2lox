@@ -3,4 +3,5 @@ java/com/thmtvz/s2lox/Expr.java
 java/com/thmtvz/s2lox/Stmt.java
 java/com/thmtvz/s2lox/TAGS
 ts/node_modules
-ts/*.js
+ts/Stmt.ts
+ts/Expr.ts
