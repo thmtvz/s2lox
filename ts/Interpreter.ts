@@ -64,8 +64,7 @@ export default class Interpreter implements ExprVisitor<S2ltype>, StmtVisitor<vo
 	    public arity() { return 0; }
 	    
 	    public call(interpreter: Interpreter, args: S2ltype[]): S2ltype{
-		this.clock();
-		return null;
+		return this.clock();
 	    }
 
 	    public toString() { return "<native fun>"; }
