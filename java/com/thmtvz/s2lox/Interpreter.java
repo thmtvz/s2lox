@@ -85,7 +85,7 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
 		    double maxValue = Double.parseDouble(arguments.get(1).toString());
 		    double minValue = Double.parseDouble(arguments.get(0).toString());
 		    double rand = rng.nextDouble();
-		    return (double) (Math.ceil(rand * maxValue) + minValue);
+		    return (double) Math.ceil(rand * (maxValue +Math.abs(minValue))) + -Math.abs(minValue);
 		}
 		
 		@Override
