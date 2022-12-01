@@ -1,15 +1,15 @@
-import Runner from "./Runner.js";
-import { readFileSync } from "node:fs";
-import { readSync } from "node:fs";
-import { writeSync } from "node:fs";
-import { resolve } from "node:path";
+const Runner = require("./Runner.js").default; //??
+const readFileSync = require("node:fs").readFileSync;
+const readSync = require("node:fs").readSync;
+const writeSync = require("node:fs").writeSync;
+const resolve = require("node:path").resolve;
 
-function readfile(filename: string): string{
+function readfile(filename){
     let contents = readFileSync(resolve(filename));
     return contents.toString();
 }
 
-function readline(prompt?: string): string{
+function readline(prompt){
     if(prompt){
 	writeSync(1, prompt);
     }
@@ -22,7 +22,7 @@ function readline(prompt?: string): string{
     return buf.slice(0, p).toString().replace("\n", "");
 }
 
-function output(o: string): void{
+function output(o){
     console.log(o);
     return;
 }
@@ -33,9 +33,10 @@ function output(o: string): void{
 	readfile,
 	output,
 	Date.now,
+	process.exit
     );
     if(args.indexOf("--help") >= 0){
-	console.log("sS2lox: S2lox [script] [--help]");
+	console.log("nodeS2lox: S2lox [script] [--help]");
 	process.exit(64);
     } else if(args.length === 3){
 	runner.runScript(args[2]);

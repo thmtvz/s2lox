@@ -5,7 +5,7 @@ java:
 	@ $(MAKE) -C java BUILDDIR=$(BUILDDIR)
 
 javadebug:
-	@ echo "Makign java debug"
+	@ echo "Making java debug"
 	@ $(MAKE) -C java BUILDDIR=$(BUILDDIR) DEBUG=debug
 
 clean:
@@ -17,16 +17,16 @@ c:
 
 node:
 	@ echo "Making nodejs"
-	@ $(MAKE) -C ts BUILDDIR=$(BUILDDIR) node
+	@ $(MAKE) -C ts BUILDDIR=$(BUILDDIR) n
 
 deno:
 	@ echo "Making deno"
-	@ $(MAKE) -C ts BUILDDIR=$(BUILDDIR) deno
+	@ $(MAKE) -C ts BUILDDIR=$(BUILDDIR) d
 
 browser:
 	@ echo "Making for browser"
-	@ $(MAKE) -C ts BUILDDIR=$(BUILDDIR) browser
+	@ $(MAKE) -C ts BUILDDIR=$(BUILDDIR) b
 
-all: java javadebug node deno browser
+all: java node deno browser
 
 .PHONY: java genast c clean ts

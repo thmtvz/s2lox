@@ -17,7 +17,7 @@ function appendToExitFns(fn){
 }
 
 function help(){
-    error("Usage: ./genExprClass.js OUTDIR [veryDebug]");
+    error("Usage: ./genRun.js OUTDIR PLATAFORM");
 }
 
 function error(message, e, code = 1){
@@ -56,11 +56,17 @@ function bufferedWriteToFile(filepath){
 
 (function main(args){
         
-    let outdir = args[2];
-    let [writeln] = bufferedWriteToFile(path.resolve(outdir + "tsS2lox"));
+    const outdir = args[2];
+    const plataform = args[3];
+    const file = `${outdir}${plataform}S2lox`;
+    const [writeln] = bufferedWriteToFile(path.resolve(file));
 
     writeln("#!/usr/bin/sh");
     writeln();
-    writeln(`node ${outdir}jsBuild/main.js $@`);
-    
+    if(plataform === "deno"){
+	writeln(`deno run --allow-read --allow-write ${outdir}${plataform}JsBuild/main.js $@`);
+    }else {
+	writeln(`node ${outdir}${plataform}JsBuild/main.js $@`);
+    }
+
 })(process.argv);
