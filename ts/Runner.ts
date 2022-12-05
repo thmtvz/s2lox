@@ -17,6 +17,7 @@ export default class Runner{
 	public readonly readfile: (s: string) => string,
 	public readonly output: (o: string) => void,
 	public readonly clock: () => number,
+	public readonly exit: (c?: number) => void,
     ) {}
 
     public runPrompt(): void{
@@ -25,7 +26,7 @@ export default class Runner{
 	    const line = this.readline(`[${lineNo}] s2lox -> `);
 	    if(line === ".exit" || line === ""){
 		this.output("Bye");
-		process.exit(0);
+		this.exit(0);
 	    }
 	    this.run(line);
 	    this.hadError = false;
@@ -36,8 +37,8 @@ export default class Runner{
     public runScript(path: string){
 	const source = this.readfile(path);
 	this.run(source);
-	if(this.hadError) process.exit(65);
-	if(this.hadRuntimeError) process.exit(70);
+	if(this.hadError) this.exit(65);
+	if(this.hadRuntimeError) this.exit(70);
 	return;
     }
 
