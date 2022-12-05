@@ -36,13 +36,13 @@
 (defvar lx-mode-hook nil)
 
 (defconst lx-keywords
-  '("import" "class" "fun" "var" "for" "if" "else" "while" "return" "and" "or" "super" "this"))
+  '("import" "class" "fun" "var" "for" "if" "else" "while" "return" "and" "or" "super" "this" "noop"))
 
 (defconst lx-builtins
-  '("print" "toString" "number" "random" "clock"))
+  '("print" "toString" "number" "random" "clock" "input" "object"))
 
 (defconst lx-constants
-  '("nil" "true" "false"))
+  '("nil" "true" "false" ))
 
 (defvar lx-font-lock-definitions
   (append
