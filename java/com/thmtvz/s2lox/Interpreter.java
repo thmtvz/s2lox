@@ -448,4 +448,9 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
 	S2lox.run(new String(content, Charset.defaultCharset()), this);
 	return null;
     }
+
+    @Override
+    public Void visitNoopStmt(Stmt.Noop stmt){
+	return null;
+    }
 }

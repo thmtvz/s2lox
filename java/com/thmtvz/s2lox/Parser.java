@@ -88,6 +88,7 @@ class Parser{
     }
 
     private Stmt statement(){
+	if(match(NOOP)) return noopStatement();
 	if(match(IMPORT)) return importStatement();
 	if(match(FOR)) return forStatement();
 	if(match(IF)) return ifStatement();
@@ -96,6 +97,11 @@ class Parser{
 	if(match(WHILE)) return whileStatement();
 	if(match(LEFT_BRACE)) return new Stmt.Block(block());
 	return expressionStatement();
+    }
+
+    private Stmt noopStatement(){
+	consume(SEMICOLON, "Expected ';' after noop statement");
+	return new Stmt.Noop();
     }
 
     private Stmt importStatement(){

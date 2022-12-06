@@ -83,6 +83,7 @@ function bufferedWriteToFile(filepath){
     ];
 
     let stmtClasses = [
+	{name: "Noop",          body: ""},
 	{name: "Import",	body: "Token name"},
 	{name: "Block",		body: "List<Stmt> statements"},
 	{name: "Class",		body: "Token name, Expr.Variable superClass, " +
@@ -141,6 +142,7 @@ function bufferedWriteToFile(filepath){
 	    writeln("      StringBuilder builder = new StringBuilder(); ");	    
 	    writeln();
 	    for(const field of fields){
+		if(field === "") break;
 		const [fieldType, fieldName] = field.split(" ");
 		const rgx = /List/;
 		if(rgx.test(fieldType)){
@@ -166,6 +168,7 @@ function bufferedWriteToFile(filepath){
 	    //constructor
 	    writeln("    " + c.name + "(" + c.body + "){");
 	    for(let field of fields){
+		if(field === "") break;
 		let fieldName = field.split(" ")[1];
 		writeln("      " + "this." + fieldName + " = "+ fieldName +";");
 	    }
@@ -175,6 +178,7 @@ function bufferedWriteToFile(filepath){
 	    
 	    //data fields  
 	    for(let field of fields){
+		if(field === "") break;
 		writeln("    " + "final " + field + ";");
 	    }
 	    writeln("  }");
