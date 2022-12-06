@@ -33,8 +33,8 @@ function output(o){
     if(args.indexOf("--help") >= 0){
 	console.log("denoS2lox: S2lox [script] [--help]");
 	Deno.exit(64);
-    } else if(args.length === 3){
-	runner.runScript(args[2]);
+    } else if(args.length === 1){
+	runner.runScript(args[0]);
     } else {
 	runner.runPrompt();
     }
