@@ -13,6 +13,8 @@ DEBUGFLAG  := -g
 OPTS	   := -Werror -d $(BUILDDIR)$(DEBUG)
 LINT	   := -Xlint:unchecked
 JARNAME	   := $(MAIN)
+ASTSOURCE  := $(DIRSTRUCT)Stmt.java $(DIRSTRUCT)Expr.java 
+
 
 $(TARGETDIR)$(SCRIPTNAME): $(TARGETDIR)$(JARNAME)
 ifeq ($(strip $(DEBUG)),)
@@ -29,7 +31,7 @@ ifeq ($(strip $(DEBUG)),)
 	@ cd $(BUILDDIR) && jar cfe $(JARNAME).jar $(subst /,.,$(DIRSTRUCT))$(MAIN) $(DIRSTRUCT)*.class
 endif
 
-$(MAINCLASS): $(SOURCES)
+$(MAINCLASS): $(SOURCES) $(ASTSOURCE)
 	@ echo "Compiling sources"
 ifeq ($(strip $(DEBUG)),)
 	@ $(JC) $(LINT) $(OPTS) $(MAINSOURCE)
@@ -37,7 +39,8 @@ else
 	@ $(JC) $(DEBUGFLAG) $(LINT) $(OPTS) $(MAINSOURCE)
 endif
 
-clean: 
-	@ echo "Cleaning build directory"
+$(ASTSOURCE): ./tool/genAst.js
+	@ echo "Generating source"
+	@ node tool/genAst.js $(DIRSTRUCT)
 
-.PHONY: clean 
+.PHONY: 

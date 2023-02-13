@@ -39,7 +39,7 @@ class Parser{
     }
 
     private Stmt classDeclaration(){
-	Token name = consume(IDENTIFIER, "Expecter class name.");
+	Token name = consume(IDENTIFIER, "Expected class name.");
 
 	Expr.Variable superClass = null;
 	if(match(LESS)){
@@ -59,7 +59,7 @@ class Parser{
 
     private Stmt.Function function(String kind){
 	Token name = consume(IDENTIFIER, "Expect " + kind + " name.");
-	consume(LEFT_PAREN, "Expect '(' after" + kind + " name.");
+	consume(LEFT_PAREN, "Expect '(' after " + kind + " name.");
 	List<Token> parameters = new ArrayList<>();
 	if(!check(RIGHT_PAREN)){
 	    do {
@@ -88,6 +88,8 @@ class Parser{
     }
 
     private Stmt statement(){
+	if(match(NOOP)) return noopStatement();
+	if(match(IMPORT)) return importStatement();
 	if(match(FOR)) return forStatement();
 	if(match(IF)) return ifStatement();
 	if(match(PRINT)) return printStatement();
@@ -95,6 +97,18 @@ class Parser{
 	if(match(WHILE)) return whileStatement();
 	if(match(LEFT_BRACE)) return new Stmt.Block(block());
 	return expressionStatement();
+    }
+
+    private Stmt noopStatement(){
+	consume(SEMICOLON, "Expected ';' after noop statement");
+	return new Stmt.Noop();
+    }
+
+    private Stmt importStatement(){
+	Token name = consume(STRING, "Expected module name.");
+	consume(SEMICOLON, "Expected ';' after import statement");
+
+	return new Stmt.Import(name);
     }
 
     private Stmt forStatement(){
@@ -207,6 +221,7 @@ class Parser{
 	    case WHILE:
 	    case PRINT:
 	    case RETURN:
+	    case IMPORT:
 		return;
 	    }
 
@@ -352,7 +367,7 @@ class Parser{
 
     private Expr primary(){
 	if(match(FALSE)) return new Expr.Literal(false);
-	if(match(TRUE)) return new Expr.Literal(true);
+ 	if(match(TRUE)) return new Expr.Literal(true);
 	if(match(NIL)) return new Expr.Literal(null);
 
 	if(match(NUMBER, STRING)){

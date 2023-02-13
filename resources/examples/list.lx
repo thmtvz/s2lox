@@ -1,0 +1,62 @@
+class _ListNode {
+  init(value){
+    this.value = value;
+    this.next = nil;
+  }
+}
+
+class List {
+  init(){
+    this.rootnode = nil;
+    this.length = 0;
+  }
+
+  get(index){
+    if(index > this.length - 1) return nil;
+    if(index < 0) return nil;
+    return this._at(index).value;
+  }
+
+  push(value){
+    var newValue = _ListNode(value);
+    if(this.rootnode == nil){
+      this.rootnode = newValue;
+      this.length = this.length + 1;
+      return;
+    }
+    var end = this._at(this.length - 1);
+    end.next = newValue;
+    this.length = this.length + 1;
+  }
+
+  pop(){
+    var newLast = this._at(this.length - 2);
+    var e = newLast.value;
+    newLast.next = nil;
+    this.length = this.length - 1;
+    return e;
+  }
+
+  set(idx, value){
+    if(idx < 0) return;
+    if(idx > this.length) return;
+    var e = this._at(idx);
+    e.value = value;
+  }
+
+  foreach(fn){
+    var e = this.rootnode;
+    for(var i = 0; i < this.length; i = i + 1){
+      fn(e.value);
+      e = e.next;
+    }
+  }
+
+  _at(idx){
+    var e = this.rootnode;
+    for(var i = 0; i < idx; i = i + 1){
+      e = e.next;
+    }
+    return e;
+  }
+}

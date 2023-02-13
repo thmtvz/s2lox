@@ -21,7 +21,7 @@ class S2loxClass implements S2loxCallable {
 	}
 
 	if(superClass != null){
-	    superClass.findMethod(name);
+	    return superClass.findMethod(name);
 	}
 
 	return null;

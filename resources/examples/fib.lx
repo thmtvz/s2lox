@@ -1,21 +1,24 @@
-class s{} //dynamic storage hack
+import "list";
 
 fun fib(n){
-    if(n <= 0) return 0;
-    var store = s();
-    store.x = 1;
-    store.y = 1;
-    for(var i = 3; i <= n; i = i + 1){
-        var temp = store.y;
-	store.y = store.y + store.x;
-	store.x = temp;
-    }
-    return store.y;
+  if(n <= 0) return 0;
+  var store = List();
+  store.push(1);
+  store.push(1);
+  for(var i = 3; i <= n; i = i + 1){
+    var temp = store.get(1);
+    store.set(1, store.get(0) + temp);
+    store.set(0, temp);
+  }
+  return store.get(1);
 }
 
+print "Enter the nth digit of fibonacci sequence you want:";
+var i = number(input());
+
 var t1 = clock();
-var result = fib(30);
+var result = fib(i);
 var t2 = clock();
 
-print "fib(30) took " + toString(t2 - t1) +
-  " time to complete and returned " + toString(result);
+print "fib(" + toString(i) + ") took " + toString(t2 - t1) +
+			       " miliseconds to complete and returned " + toString(result);

@@ -1,0 +1,142 @@
+class _Node{
+  init(value){
+    this.value = value;
+    this.l = nil;
+    this.r = nil;
+  }
+}
+
+class Bst{
+  //insert(anytype)
+  //min(only with numbers)
+  //max(only with numbers)
+  //inOrderWalk(action with elements *fun*)
+  //reverseWalk(action with elements *fun*)
+  //search(value)
+  init(){
+    this.root = nil;
+  }
+  
+  insert(value){
+    var newNode = _Node(value);
+    var nodeX = this.root;
+    var nodeY = nil;
+    while(nodeX != nil){
+      nodeY = nodeX;
+      if(value < nodeX.value){
+	nodeX = nodeX.l;
+      } else {
+	nodeX = nodeX.r;
+      }
+    }
+    if(nodeY == nil) this.root = newNode;
+    else if(value < nodeY.value) nodeY.l = newNode;
+    else if(value > nodeY.value) nodeY.r = newNode;
+  }
+  
+  delete(value){
+    //bad delete, fix later
+    var node = this.root;
+    var parent = nil;
+    while(node.value != value){
+      parent = node;
+      if(value < node.value) node = node.l;
+      else node = node.r;
+    }
+    if(node == nil) return;
+    //deleting rootnode
+    if(parent == nil){
+      if(node.l != nil and node.r != nil){
+	var subTreeLeft = node.l;
+	node = node.r;
+	while(node.l != nil){
+	  node = node.l;
+	}
+	node.l = subTreeLeft;
+	return;
+      }
+      else if(node.l != nil){
+	node = node.l;
+	return;
+      }
+      else {
+	node = node.r;
+	return;
+      }
+    }
+    if(node.l != nil and node.r != nil){
+      var subTreeLeft = node.l;
+      parent.r = node.r;
+      node = parent.r;
+      while(node.l != nil){
+	node = node.l;
+      }
+      node.l = subTreeLeft;
+      return;
+    }
+    else if(node.l != nil){
+      parent.r = node.l;
+      return;
+    }
+    else {
+      parent.r = node.r;
+      return;
+    }
+  }
+
+  min(){
+    var current = this.root;
+    while(current.l != nil){
+      current = current.l;
+    }
+    return current.value;
+  }
+
+  max(){
+    var current = this.root;
+    while(current.r != nil){
+      current = current.r;
+    }
+    return current.value;
+  }
+
+  inOrderWalk(fn){
+    fun composer(fn){
+      fun _inOrderWalk(node){
+	if(node != nil){
+	  _inOrderWalk(node.l);
+	  fn(node.value);
+	  _inOrderWalk(node.r);
+	}
+      }
+      return _inOrderWalk; 
+    }
+    var walker = composer(fn);
+    walker(this.root);
+  }
+
+  reverseWalk(fn){
+    fun composer(fn){
+      fun _inOrderWalk(node){
+	if(node != nil){
+	  _inOrderWalk(node.r);
+	  fn(node.value);
+	  _inOrderWalk(node.l);
+	}
+      }
+      return _inOrderWalk; 
+    }
+    var walker = composer(fn);
+    walker(this.root);
+  }
+
+  search(value){
+    var current = this.root;
+    while(current != nil and value != current.value){
+	if(value < current.value) current = current.l;
+	else current = current.r;
+    }
+    if(current == nil) return nil;
+    return current;
+  }
+}

@@ -30,6 +30,16 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void>{
     }
 
     @Override
+    public Void visitNoopStmt(Stmt.Noop stmt){
+	return null;
+    }
+    
+    @Override
+    public Void visitImportStmt(Stmt.Import stmt){
+	return null;
+    }
+
+    @Override
     public Void visitBlockStmt(Stmt.Block stmt){
 	beginScope();
 	resolve(stmt.statements);

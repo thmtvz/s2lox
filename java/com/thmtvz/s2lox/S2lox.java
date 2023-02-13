@@ -37,11 +37,10 @@ public class S2lox{
 	    System.out.print("]");
 	    System.out.print(" s2lox -> ");
 	    String line = reader.readLine();
-	    if(line.equals(".exit")){
+	    if(line.equals(".exit") || line == null){
 		System.out.println("Bye");
 		System.exit(0);
 	    }
-	    if(line == null) System.exit(0);
 	    run(line);
 	    hadError = false;
 	    lineNo++;
@@ -59,16 +58,27 @@ public class S2lox{
     static void run(String source){
 	Scanner scanner = new Scanner(source);
 	List<Token> tokens = scanner.scanTokens();
-	// for(Token tok :tokens){
-	//     System.out.println(tok);
-	// }
+
 	Parser parser = new Parser(tokens);
 	List<Stmt> statements = parser.parse();
-	// for(Stmt statement : statements){
-	//     System.out.print("{STATEMENT: ");
-	//     System.out.print(statement);
-	//     System.out.print("}");
-	// }
+
+	if(hadError) return;
+
+	Resolver resolver = new Resolver(interpreter);
+	resolver.resolve(statements);
+
+	if(hadError) return;
+
+	interpreter.interpret(statements);
+    }
+
+    static void run(String source, Interpreter interpreter){
+	Scanner scanner = new Scanner(source);
+	List<Token> tokens = scanner.scanTokens();
+
+	Parser parser = new Parser(tokens);
+	List<Stmt> statements = parser.parse();
+
 	if(hadError) return;
 
 	Resolver resolver = new Resolver(interpreter);

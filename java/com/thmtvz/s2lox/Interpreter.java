@@ -5,6 +5,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.file.NoSuchFileException;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import static com.thmtvz.s2lox.TokenType.*;
 
@@ -78,12 +85,13 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
 		    double maxValue = Double.parseDouble(arguments.get(1).toString());
 		    double minValue = Double.parseDouble(arguments.get(0).toString());
 		    double rand = rng.nextDouble();
-		    return (double) (Math.ceil(rand * maxValue) + minValue);
+		    return (double) Math.ceil(rand * (maxValue +Math.abs(minValue))) + -Math.abs(minValue);
 		}
 		
 		@Override
 		public String toString() { return "<native fun>"; }
 	    });
+	//plain object without defining new class
 	globals.define("object", new S2loxClass("object", null,
 						new HashMap<String, S2loxFunction>()));
     }
@@ -222,7 +230,7 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
 	statement.accept(this);
     }
 
-    void resolve(Expr expr, int depth){
+    public void resolve(Expr expr, int depth){
 	locals.put(expr, depth);
     }
 
@@ -266,7 +274,6 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
 
     @Override
     public Void visitBlockStmt(Stmt.Block stmt){
-	//nao esquecer de dar uma olhadinha no teste sem o this aqui
 	executeBlock(stmt.statements, new Environment(this.environment));
 	return null;
     }
@@ -300,7 +307,7 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
 	if(expr.operator.type == OR){
 	    if(isTruthy(left)) return left;
 	} else {
-	    if(!isTruthy(left)) return  left;
+	    if(!isTruthy(left)) return left;
 	}
 
 	return evaluate(expr.right);
@@ -425,4 +432,25 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
 	throw new RuntimeError(expr.name, "Only instances have properties.");
     }
 
+    @Override    
+    public Void visitImportStmt(Stmt.Import stmt){
+	String filename = stmt.name.literal + ".lx";
+	byte[] content = {};
+
+	try{
+	    content = Files.readAllBytes(Paths.get(filename));
+	} catch(NoSuchFileException e){
+	    S2lox.error(stmt.name, "Module not found.");
+	} catch(IOException e){
+	    System.out.println(e);
+	}
+
+	S2lox.run(new String(content, Charset.defaultCharset()), this);
+	return null;
+    }
+
+    @Override
+    public Void visitNoopStmt(Stmt.Noop stmt){
+	return null;
+    }
 }
